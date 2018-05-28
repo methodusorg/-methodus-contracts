@@ -1,0 +1,26 @@
+{
+    "name": "@methodus/contracts",
+    "version": "0.0.1",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "prepare": "npm test",
+        "pretest": "tsc",
+        "prepublishOnly": "npm version patch  -message \"[VER] automatic tag commit by npm. Reviewer: npm\"",
+        "xtest": "set test='true'&alsatian tests/*.spec.js "
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {},
+    "dependencies": {
+        "@methodus/client": "^0.0.3",
+        "@methodus/server": "^0.0.13",
+        "@types/lodash": "^4.14.75",
+        "@types/node": "^8.0.31",
+        "alsatian": "^2.0.0",
+        "colors": "^1.1.2",
+        "jsdoc-regex": "^1.0.1",
+        "shelljs": "^0.7.8",
+        "typescript": "^2.5.2"
+    }
+}
