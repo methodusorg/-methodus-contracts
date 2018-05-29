@@ -3,10 +3,9 @@
     "version": "0.0.2",
     "description": "",
     "main": "index.js",
-    "scripts": {
-        "prepare": "npm test",
+    "scripts": {       
         "pretest": "tsc",
-        "prepublishOnly": "npm version patch  -message \"[VER] automatic tag commit by npm. Reviewer: npm\"",
+        "prepublishOnly": "npm version patch",
         "xtest": "set test='true'&alsatian tests/*.spec.js "
     },
     "author": "",
