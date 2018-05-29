@@ -84,7 +84,7 @@ import { MethodResult } from '@methodus/client';
         classDefinition = classDefinition.replace(/, \[.*?\]/g, '');
         classDefinition += `\n public static base: string;`;
         let notClean = true;
-        let methodResult = `return new M.MethodResult({});`;
+        let methodResult = `return new M.MethodResult({} as any);`;
 
         let classBody = '';
 

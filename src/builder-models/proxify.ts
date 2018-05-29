@@ -41,7 +41,7 @@ export class Proxify {
         //read controller file
         let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
 
-        
+
         shell.mkdir('-p', this.target);
         console.log('> Generating contract:', className, packageName);
 
@@ -84,7 +84,7 @@ export class Proxify {
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
 
         let notClean = true;
-        let methodResult = `return new MethodResult({});`;
+        let methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
 
 
@@ -202,7 +202,7 @@ export class Proxify {
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
 
         let notClean = true;
-        let methodResult = `return new MethodResult({});`;
+        let methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
 
 
