@@ -1,9 +1,9 @@
 {
     "name": "@methodus/contracts",
-    "version": "0.0.2",
+    "version": "0.0.3",
     "description": "",
     "main": "index.js",
-    "scripts": {       
+    "scripts": {
         "pretest": "tsc",
         "prepublishOnly": "npm version patch",
         "xtest": "set test='true'&alsatian tests/*.spec.js "
