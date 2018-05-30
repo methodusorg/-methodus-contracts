@@ -10,9 +10,8 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@methodus/client": "^0.0.6",      
+        "@methodus/client": "^0.0.7",
         "@types/node": "^7.0.31"
-       
     },
     "dependencies": {}
 }

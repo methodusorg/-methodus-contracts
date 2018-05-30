@@ -12,8 +12,8 @@
     "license": "ISC",
     "devDependencies": {},
     "dependencies": {
-        "@methodus/client": "^0.0.3",
-        "@methodus/server": "^0.0.13",
+        "@methodus/client": "^0.0.7",
+        "@methodus/server": "^0.0.18",
         "@types/lodash": "^4.14.75",
         "@types/node": "^8.0.31",
         "alsatian": "^2.0.0",
