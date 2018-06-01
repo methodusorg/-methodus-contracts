@@ -44,6 +44,30 @@
             }
         },
         {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile client contracts",
+            "program": "${workspaceRoot}\\client.js",
+            "args": [
+                "./build.json"
+               
+                
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug",
+                "NODE_CONFIG_ENV": "local",
+                "NODE_CONFIG_DIR": "${workspaceRoot}/tests/config/",
+                "NODE_LOG_DIR": "./logs",
+                "PORT": "2065"
+            }
+        },
+
+        {
             "request": "launch",
             "console": "internalConsole",
             // Name of configuration; appears in the launch configuration drop down menu.

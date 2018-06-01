@@ -25,6 +25,7 @@ export class Clientify {
     };
 
     CopyFromFile(controllerPath: any, className: string, packageName?: string) {
+
         let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
         shell.mkdir('-p', this.target);
         console.log('> Copying file:', className, packageName);
@@ -37,6 +38,7 @@ export class Clientify {
 
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
         //read controller file
+
         let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
 
         // let newPackageName = packageName.replace('@tmla-tiles', '@tmla-contracts');
@@ -93,6 +95,7 @@ import { MethodResult } from '@methodus/client';
         let m;
         const mocks_and_methods = {};
         let Tuple: any = {};
+
         while ((m = regex.exec(content)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
@@ -112,10 +115,15 @@ import { MethodResult } from '@methodus/client';
                     Tuple.result = `return new MethodResult(${mockRegex.exec(match)[1]}); `;
                 }
                 if (match.indexOf('@Method(') === 0) {
+                    //find return type
+
+
                     Tuple.method = match;
                 }
 
                 if (match.indexOf('public') === 0) {
+
+                    //find return type
                     Tuple.contract = match;
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
@@ -129,6 +137,15 @@ import { MethodResult } from '@methodus/client';
                 classBody += `\n  ${tuple.comment}`;
             }
             if (tuple.method) {
+                //try to resolve result value
+                const resultRegex = /\<MethodResult<([^\)]+)\>\>/
+                const m = resultRegex.exec(tuple.contract);
+                if (m.length > 1) {
+                    methodResult = `return {} as ${m[1]};`;
+                    tuple.contract = tuple.contract.replace(m[0], `<${m[1]}>`);
+                }
+
+
 
                 classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)} 
         }
