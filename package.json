@@ -1,6 +1,6 @@
 {
     "name": "@methodus/contracts",
-    "version": "0.0.7",
+    "version": "0.0.9",
     "description": "",
     "main": "index.js",
     "scripts": {
@@ -12,7 +12,7 @@
     "license": "ISC",
     "devDependencies": {},
     "dependencies": {
-        "@methodus/client": "^0.0.7",
+        "@methodus/client": "^0.0.8",
         "@methodus/server": "^0.0.18",
         "@types/lodash": "^4.14.75",
         "@types/node": "^8.0.31",
