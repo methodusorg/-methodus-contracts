@@ -89,7 +89,7 @@ export class Proxify {
 
 
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
-        const mockRegex = /@MethodMock\((.*)\)/
+        const mockRegex = /@MethodMock\((.*)\)/;
         let m;
         const mocks_and_methods = {};
         let jsonSchema = {};
@@ -102,11 +102,17 @@ export class Proxify {
             }
             m.forEach((match, groupIndex) => {
 
-                if (!match)
+                if (!match) {
                     return;
+                }
+
 
                 if (match.indexOf('@MethodMock') === 0) {
-                    Tuple.result = `return new MethodResult(${mockRegex.exec(match)[1]}); `;
+                    Tuple.result = `
+                        const methodArgs = arguments;
+                        return new Promise<any>(function (resolve, reject) {
+                            resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
+                        });`;
                 }
 
                 if (match.indexOf('/*') === 0) {
@@ -120,12 +126,10 @@ export class Proxify {
                     Tuple.method = match;
                 }
                 if (match.indexOf('public') === 0) {
-                    Tuple.contract = match;
+                    Tuple.contract = match.replace(' async ', ' ');
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
-
-
             });
         }
 
@@ -208,8 +212,8 @@ export class Proxify {
 
 
 
-        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MessageWorker\(.*\)|@MessageWorkers\(.*\)|@MessageHandler\(.*\)|public.+{/g;
-        const mockRegex = /@MethodMock\((.*)\)/
+        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
+        const mockRegex = /@MethodMock\((.*)\)/;
         let m;
         const mocks_and_methods = {};
         let Tuple: any = {};
@@ -228,8 +232,13 @@ export class Proxify {
                 }
 
                 if (match.indexOf('@MethodMock') === 0) {
-                    Tuple.result = `return new MethodResult(${mockRegex.exec(match)[1]}); `;
+                    Tuple.result = `
+                    const methodArgs = arguments;
+                    return new Promise<any>(function (resolve, reject) {
+                        resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
+                    });`;
                 }
+
                 if (match.indexOf('@MessageWorker(') === 0 ||
                     match.indexOf('@MessageWorkers(') === 0 ||
                     match.indexOf('@MessageHandler(') === 0) {
@@ -237,7 +246,7 @@ export class Proxify {
                 }
 
                 if (match.indexOf('public') === 0) {
-                    Tuple.contract = match;
+                    Tuple.contract = match.replace(' async ', ' ');
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }

@@ -30,8 +30,8 @@ export class Modelify {
     }
 
     ProxifyFromModel(modelSource: any, className: string, packageName: string) {
-       
-  
+
+
 
         shelljs.mkdir('-p', this.target);
         console.log('Generating Model for:', className);
@@ -86,7 +86,7 @@ export class Modelify {
 
             shelljs.mkdir('-p', path.join(this.target, 'models'));
             fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.ts`), HEADER + importRow + customeSection + modelBody);
-            fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.schema`), JSON.stringify(modelSchema, null, 2));
+            //fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.schema`), JSON.stringify(modelSchema, null, 2));
 
         } catch (ex) {
             console.error(ex);
@@ -133,8 +133,9 @@ export class Modelify {
             case 'Array':
                 return 'Array<any>';
             case 'Date':
-            case 'Object':
                 return typeName;
+            case 'Object':
+                return 'any';
         }
 
         if (importTypes.indexOf(typeName + 'Model') > -1) {

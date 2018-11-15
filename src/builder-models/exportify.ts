@@ -60,11 +60,12 @@ export function Exportify(buildConfiguration: Configuration, target: string, pac
 
     if (buildConfiguration.contracts) {
         const contracts = buildConfiguration.contracts;
-        body += `
-            export function getSchema(schemaType: string) {
+        // // // export function getSchema(schemaType: string) {
 
-                const schema = require('./models/' + schemaType.toLowerCase() + '.schema');
-            }
+        // // //     const schema = require('./models/' + schemaType.toLowerCase() + '.schema');
+        // // // }
+        body += `
+       
 
             export function getAll(): string[] {
                 return [` +
@@ -103,7 +104,7 @@ export function Exportify(buildConfiguration: Configuration, target: string, pac
 
 
 
- 
+
     shell.mkdir('-p', target);
     fs.writeFileSync(path.join(target, 'index.ts'), HEADER + head + body);
 }

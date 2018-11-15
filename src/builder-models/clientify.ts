@@ -90,8 +90,8 @@ import { MethodResult } from '@methodus/client';
 
         let classBody = '';
 
-        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|public.+{/g;
-        const mockRegex = /@MethodMock\((.*)\)/
+        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|public (.|\n|\r)*? {/g;
+        const mockRegex = /@MethodMock\((.*)\)/;
         let m;
         const mocks_and_methods = {};
         let Tuple: any = {};
@@ -112,19 +112,19 @@ import { MethodResult } from '@methodus/client';
                 }
 
                 if (match.indexOf('@MethodMock') === 0) {
-                    Tuple.result = `return new MethodResult(${mockRegex.exec(match)[1]}); `;
+                    Tuple.result = `  
+                    const methodArgs = arguments;
+                    return new Promise<any>(function (resolve, reject) {
+                        resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
+                    });`
                 }
                 if (match.indexOf('@Method(') === 0) {
                     //find return type
-
-
                     Tuple.method = match;
                 }
-
                 if (match.indexOf('public') === 0) {
-
                     //find return type
-                    Tuple.contract = match;
+                    Tuple.contract = match.replace(' async ', ' ');
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
