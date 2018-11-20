@@ -1,13 +1,13 @@
 import { Proxify } from './proxify';
 import { Modelify } from './modelify';
-import { UseTemplate, Exportify, ModelsIndex } from './exportify';
+import { UseTemplate, Exportify, ModelsIndex, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
 import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
 
 import * as path from 'path';
 import * as colors from 'colors';
 import * as fs from 'fs';
- 
+
 
 export class Server {
     modelify: Modelify;
@@ -28,7 +28,7 @@ export class Server {
             const contract = configuration.contracts[contractKey];
             this.proxify.ProxifyFromFile(contract.path, contractKey, packageName);
 
-        }    
+        }
 
         for (let contractKey in configuration.bindings) {
             const contract = configuration.bindings[contractKey];
@@ -51,7 +51,11 @@ export class Server {
         UseTemplate('_tsconfig.json', 'tsconfig.json', target, { name: configuration.contractNameServer, version: originalPackage.version });
         UseTemplate('_.gitignore', '.gitignore', target);
         UseTemplate('_.npmignore', '.npmignore', target);
-        UseTemplate('_.npmrc', '.npmrc', target);
+        if (configuration.npmrc) {
+            UseCustomTemplate(path.join(source, configuration.npmrc), '.npmrc', target);
+        } else {
+            UseTemplate('_.npmrc', '.npmrc', target);
+        }
 
         //add, dependencies: configuration.dependencies
         //load package.json

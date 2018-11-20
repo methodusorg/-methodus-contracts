@@ -1,0 +1,21 @@
+{
+    "contracts/simple": {
+        "contractNameServer": "@server/simple",
+        "contractNameClient": "@client/simple",
+        "buildPath": "./build_path/",
+        "path": "build_vars/simple",
+        "models": {},
+        "npmrc": "./.npmrc",
+        "contracts": {
+            "Simple": {
+                "path": "./controllers/simple.controller.ts"
+            }
+        },
+        "includes": {
+            "Mock": {
+                "path": "../../build_mocks/mock.ts"
+            }
+        },
+        "dependencies": {}
+    }
+}

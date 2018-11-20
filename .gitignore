@@ -7,3 +7,4 @@ yarn.lock
 node_modules/
 *.d.ts
 logs
+build_path/

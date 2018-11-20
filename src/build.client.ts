@@ -2,11 +2,13 @@ import { Client } from './builder-models/client';
 import { Configuration, KeysConfiguration } from './builder-models/interfaces';
 import * as path from 'path';
 import * as colors from 'colors';
+import * as del from 'del';
+import * as glob from 'glob';
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
 
-export function ClientBuilder() {
+export async function ClientBuilder() {
 
     var buildConfiguration = null;
     // process.argv.forEach((val, index) => {
@@ -27,10 +29,10 @@ export function ClientBuilder() {
     }
 
     let checkList = [];
-    Object.keys(buildConfiguration).forEach(singleConfiguration => {
+    Object.keys(buildConfiguration).forEach(async (singleConfiguration) => {
         const configurationItem = buildConfiguration[singleConfiguration];
-        
-        
+
+
         console.log(colors.green(`> ${singleConfiguration}`));
         try {
             let sourcePath = process.cwd();
@@ -48,11 +50,37 @@ export function ClientBuilder() {
 
 
             const builder = new Client(buildConfiguration[singleConfiguration], singleConfiguration, sourcePath, destPath);
+
+
+
+
+
+
+
+
+
             builder.install(destPath);
             builder.link(destPath);
             if (publish) {
                 builder.publish(destPath);
             }
+
+            setTimeout(() => {
+                const delPath = path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.ts');
+                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.d.ts');
+
+                del([delPath, delPathNegate]).then(paths => {
+
+                    console.log('Deleted files and folders:\n', paths.join('\n'));
+                }).catch((error) => {
+                    console.error(error);
+                });
+
+            }, 1000 * 10);
+
+
+
+
             checkList.push(`${singleConfiguration}: ok`);
         } catch (error) {
             checkList.push(`${singleConfiguration}: error`);

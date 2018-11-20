@@ -24,11 +24,133 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "T | Test server contracts | Simple",
+            "program": "${workspaceRoot}\\build_consumers\\simple\\index.js",
+            "args": [
+               
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile server contracts | Simple",
+            "program": "${workspaceRoot}\\build.js",
+            "args": [
+                "./build_vars/simple/build.json"
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile client contracts | Simple",
+            "program": "${workspaceRoot}\\client.js",
+            "args": [
+                "./build_vars/simple/build.json"
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile server contracts | Models",
+            "program": "${workspaceRoot}\\build.js",
+            "args": [
+                "./build_vars/models/build.json"
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile client contracts | Models",
+            "program": "${workspaceRoot}\\client.js",
+            "args": [
+                "./build_vars/models/build.json"
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+       
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile server contracts | Inherit",
+            "program": "${workspaceRoot}\\build.js",
+            "args": [
+                "./build_vars/inherit/build.json"
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "U | Compile client contracts | Inherit",
+            "program": "${workspaceRoot}\\client.js",
+            "args": [
+                "./build_vars/inherit/build.json"
+            ],
+            "cwd": "${workspaceRoot}\\",
+            "console": "internalConsole",
+            "outFiles": [],
+            "sourceMaps": true,
+            "env": {
+                "DEBUG": "none",
+                "NODE_ENV": "debug"
+            }
+        },
+
+
+        {
+            "type": "node",
+            "request": "launch",
             "name": "U | Compile contracts",
             "program": "${workspaceRoot}\\build.js",
             "args": [
                 "./build.json"
-                
             ],
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
@@ -50,8 +172,6 @@
             "program": "${workspaceRoot}\\client.js",
             "args": [
                 "./build.json"
-               
-                
             ],
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
@@ -66,7 +186,6 @@
                 "PORT": "2065"
             }
         },
-
         {
             "request": "launch",
             "console": "internalConsole",

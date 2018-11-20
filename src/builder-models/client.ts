@@ -1,6 +1,6 @@
 
 import { Modelify } from './modelify';
-import { UseTemplate, Exportify, ModelsIndex } from './exportify';
+import { UseTemplate, Exportify, ModelsIndex, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
 import { Clientify } from './clientify';
 import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
@@ -46,7 +46,12 @@ export class Client {
         UseTemplate('_tsconfig.client.json', 'tsconfig.json', target, { name: configuration.contractNameClient, version: originalPackage.version })
         UseTemplate('_.gitignore', '.gitignore', target);
         UseTemplate('_.npmignore', '.npmignore', target);
-        UseTemplate('_.npmrc', '.npmrc', target);
+        if (configuration.npmrc) {
+            UseCustomTemplate(path.join(source, configuration.npmrc), '.npmrc', target);
+        } else {
+            UseTemplate('_.npmrc', '.npmrc', target);
+        }
+
 
         //add, dependencies: configuration.dependencies
         //load package.json

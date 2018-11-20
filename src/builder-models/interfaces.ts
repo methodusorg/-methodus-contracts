@@ -28,6 +28,7 @@ export interface Configuration {
     packageName: string;
     contractNameServer: string;
     contractNameClient: string;
+    npmrc: string;
     models: Map<string, ModelConfiguration>;
     contracts: Map<string, ModelConfiguration>;
     includes: Map<string, IncludeConfiguration>;

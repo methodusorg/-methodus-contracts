@@ -108,6 +108,7 @@ export class Proxify {
 
 
                 if (match.indexOf('@MethodMock') === 0) {
+                    Tuple.mock = true;
                     Tuple.result = `
                         const methodArgs = arguments;
                         return new Promise<any>(function (resolve, reject) {
@@ -126,7 +127,11 @@ export class Proxify {
                     Tuple.method = match;
                 }
                 if (match.indexOf('public') === 0) {
-                    Tuple.contract = match.replace(' async ', ' ');
+                    if (Tuple.mock) {
+                        Tuple.contract = match.replace(' async ', ' ');
+                    } else {
+                        Tuple.contract = match;
+                    }
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
@@ -232,6 +237,7 @@ export class Proxify {
                 }
 
                 if (match.indexOf('@MethodMock') === 0) {
+                    Tuple.mock = true;
                     Tuple.result = `
                     const methodArgs = arguments;
                     return new Promise<any>(function (resolve, reject) {
@@ -246,7 +252,12 @@ export class Proxify {
                 }
 
                 if (match.indexOf('public') === 0) {
-                    Tuple.contract = match.replace(' async ', ' ');
+                    if (Tuple.mock) {
+                        Tuple.contract = match.replace(' async ', ' ');
+                    }
+                    else {
+                        Tuple.contract = match;
+                    }
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }

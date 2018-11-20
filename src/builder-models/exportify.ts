@@ -146,3 +146,13 @@ export function UseTemplate(fileName, targetFileName, destFolder, replacement?) 
     console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
     fs.writeFileSync(path.join(destFolder, targetFileName), content);
 }
+export function UseCustomTemplate(fileName, targetFileName, destFolder, replacement?) {
+    let content = fs.readFileSync(path.resolve(fileName), 'utf-8');
+    if (replacement) {
+        Object.keys(replacement).forEach(entry =>
+            content = content.replace('${' + entry + '}', replacement[entry])
+        );
+    }
+    console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
+    fs.writeFileSync(path.join(destFolder, targetFileName), content);
+}
