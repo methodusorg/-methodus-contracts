@@ -4,24 +4,23 @@ import {
     ClientConfiguration, ConfiguredServer, MethodType, ServerType,
 } from '@methodus/server';
 
-import { Simple } from '../../../build_path/@server/simple/index';
+global.methodus = { config: { 'Simple': { 'transport': 'Mock' } } };
+import { Simple } from '@server/simple';
 
 @ServerConfiguration(ServerType.Express, { port: process.env.PORT || 6690 })
-@PluginConfiguration('@methodus/describe', { path: '/manage' })
-@ClientConfiguration(Simple, MethodType.Local, ServerType.Express)
+@ClientConfiguration(Simple, MethodType.Mock, ServerType.Express)
 class SetupServer extends ConfiguredServer {
     constructor() {
         super(SetupServer);
     }
 }
 
+
 (async () => {
     new SetupServer();
-
     setTimeout(async () => {
-        debugger
         const result = await Simple.get('1111');
         console.log(result);
-    }, 5000)
-
+        process.exit(0);
+    }, 1000);
 })();

@@ -72,11 +72,13 @@ export async function ClientBuilder() {
                 del([delPath, delPathNegate]).then(paths => {
 
                     console.log('Deleted files and folders:\n', paths.join('\n'));
+                    process.exit();
                 }).catch((error) => {
                     console.error(error);
+                    process.exit();
                 });
 
-            }, 1000 * 10);
+            }, 100);
 
 
 
