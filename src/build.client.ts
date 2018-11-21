@@ -3,7 +3,6 @@ import { Configuration, KeysConfiguration } from './builder-models/interfaces';
 import * as path from 'path';
 import * as colors from 'colors';
 import * as del from 'del';
-import * as glob from 'glob';
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 

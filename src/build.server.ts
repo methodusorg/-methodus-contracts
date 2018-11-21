@@ -1,16 +1,13 @@
-
-
-
 import { Server } from './builder-models/server';
 import { Configuration, KeysConfiguration } from './builder-models/interfaces';
-
 import * as path from 'path';
 import * as colors from 'colors';
+import * as del from 'del';
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
 
-export function ServerBuilder() {
+export async function ServerBuilder() {
 
     var buildConfiguration = null;
     // process.argv.forEach((val, index) => {
@@ -55,6 +52,22 @@ export function ServerBuilder() {
             if (publish) {
                 builder.publish(destPath);
             }
+
+            setTimeout(() => {
+                const delPath = path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.ts');
+                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.d.ts');
+
+                del([delPath, delPathNegate]).then(paths => {
+
+                    console.log('Deleted files and folders:\n', paths.join('\n'));
+                    process.exit();
+                }).catch((error) => {
+                    console.error(error);
+                    process.exit();
+                });
+
+            }, 100);
+
             checkList.push(`${singleConfiguration}: ok`);
         } catch (error) {
             checkList.push(`${singleConfiguration}: error`);
