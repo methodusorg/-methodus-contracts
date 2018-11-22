@@ -25,7 +25,7 @@
             "type": "node",
             "request": "launch",
             "name": "T | Test server contracts | Simple",
-            "program": "${workspaceRoot}\\build_consumers\\simple\\index.js",
+            "program": "${workspaceRoot}\\build_consumers\\server\\simple\\index.js",
             "args": [
                
             ],

@@ -8,7 +8,7 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies":{
+  "dependencies": {
     "@server/simple": "file:../../../build_path/@server/simple"
   }
 }
