@@ -9,3 +9,7 @@ config
 .vscode
 tests
 tsconfig.json
+build_path
+build_vars
+build_mocks
+build_consumers
