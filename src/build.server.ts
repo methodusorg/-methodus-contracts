@@ -54,8 +54,8 @@ export async function ServerBuilder() {
             }
 
             setTimeout(() => {
-                const delPath = path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.ts');
-                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.d.ts');
+                const delPath = path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameServer) + '/**/*.ts');
+                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameServer) + '/**/*.d.ts');
 
                 del([delPath, delPathNegate]).then(paths => {
 

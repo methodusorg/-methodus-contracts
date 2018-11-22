@@ -54,11 +54,11 @@ import { MethodResult } from '@methodus/client';
 `;
 
         /*start custom*/
-        // let startCustom = content.indexOf('/*start custom*/');
-        // let endCustom = content.indexOf('/*end custom*/');
-        // if (startCustom > 0) {
-        //     fileHead += content.substring(startCustom, endCustom);
-        // }
+        let startCustom = content.indexOf('/*start custom*/');
+        let endCustom = content.indexOf('/*end custom*/');
+        if (startCustom > 0) {
+            fileHead += content.substring(startCustom, endCustom);
+        }
 
         if (this.configuration.models) {
             const keys = Object.keys(this.configuration.models);
@@ -80,7 +80,14 @@ import { MethodResult } from '@methodus/client';
             fileHead = fileHead.replace(/\.\.\/\.\.\//g, packageName + '/');
 
         let indexOfMethodConfig = content.indexOf('@MethodConfig(');
-        let classDefinition = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig)) + ' {\n';
+        let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
+        if (classMarker.indexOf(',') > -1) {
+            let arr = classMarker.split(',');
+            classMarker = arr[0] + arr[arr.length-1].substr(arr[arr.length-1].indexOf(')'));
+        }
+
+
+        let classDefinition = classMarker + ' {\n';
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
         classDefinition = classDefinition.replace(/\@MethodConfig/g, '@M.MethodConfig');
         classDefinition = classDefinition.replace(/, \[.*?\]/g, '');
@@ -140,6 +147,9 @@ import { MethodResult } from '@methodus/client';
                 //try to resolve result value
                 const resultRegex = /\<MethodResult<([^\)]+)\>\>/
                 const m = resultRegex.exec(tuple.contract);
+                if(!m){
+                    throw(new Error('all methods should return a promise of MethodResult<> object'))
+                }
                 if (m.length > 1) {
                     methodResult = `return {} as ${m[1]};`;
                     tuple.contract = tuple.contract.replace(m[0], `<${m[1]}>`);

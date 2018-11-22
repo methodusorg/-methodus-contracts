@@ -33,19 +33,13 @@ export class Proxify {
         let fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'includes'));
         fs.writeFileSync(fullPath, HEADER + content);
-
-
     }
 
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
-        //read controller file
+        // read controller file
         let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
-
-
         shell.mkdir('-p', this.target);
         console.log('> Generating contract:', className, packageName);
-
-        //find the @MethodConfig
 
         let fileHead = `import { Proxy, logger, Method, MethodPipe, MethodConfig, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies, Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
 
@@ -75,12 +69,20 @@ export class Proxify {
         }
 
 
-        if (packageName)
+        if (packageName) {
             fileHead = fileHead.replace(/\.\.\/\.\.\//g, packageName + '/');
+        }
 
+        //find the @MethodConfig
         let indexOfMethodConfig = content.indexOf('@MethodConfig(');
-        let proxyDecorator = `@Proxy.ProxyClass('${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`
-        let classDefinition = proxyDecorator + content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig)) + ' {\n';
+        let proxyDecorator = `@Proxy.ProxyClass('${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
+
+        let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
+        if (classMarker.indexOf(',') > -1) {
+            let arr = classMarker.split(',');
+            classMarker = arr[0] + arr[arr.length-1].substr(arr[arr.length-1].indexOf(')'));
+        }
+        let classDefinition = proxyDecorator + classMarker + ' {\n';
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
 
         let notClean = true;
@@ -165,14 +167,8 @@ export class Proxify {
     ProxifyFromBinding(controllerPath: any, className: string, packageName?: string) {
         //read controller file
         let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
-
-        // let newPackageName = packageName.replace('@tmla-tiles', '@tmla-contracts');
-        // destination = path.resolve(path.join('..', '..', newPackageName, destination))
         shell.mkdir('-p', this.target);
         console.log('> Generating binding contract:', className, packageName);
-
-        //find the @MethodConfig
-        // let loc = content.indexOf('@MessageWorkers(');
 
         let fileHead = `import { Proxy, MessageConfig, MessageHandler, MessageWorker, MessageWorkers, Files, Verbs, MethodType, Body, Response, Request, Param, Query, SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
 

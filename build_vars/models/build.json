@@ -1,5 +1,5 @@
 {
-    "contracts/simple": {
+    "contracts/models": {
         "contractNameServer": "@server/models",
         "contractNameClient": "@client/models",
         "buildPath": "./build_path/",
@@ -11,7 +11,10 @@
         },
         "npmrc": "./.npmrc",
         "contracts": {
-            "Simple": {
+            "DataController": {
+                "path": "./controllers/datacontroller.ts"
+            },
+            "Models": {
                 "path": "./controllers/models.controller.ts"
             }
         },
