@@ -6,9 +6,7 @@ import * as del from 'del';
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
-
 export async function ClientBuilder() {
-
     var buildConfiguration = null;
     // process.argv.forEach((val, index) => {
     //     console.log(`${index}: ${val}`);
@@ -44,20 +42,13 @@ export async function ClientBuilder() {
 
             const destPath = path.resolve(path.join(configurationItem.buildPath, configurationItem.contractNameClient));
 
+            // tslint:disable-next-line:no-console
             console.log(colors.cyan('> source:'), sourcePath);
+            // tslint:disable-next-line:no-console
             console.log(colors.cyan('> target:'), destPath);
 
-
-            const builder = new Client(buildConfiguration[singleConfiguration], singleConfiguration, sourcePath, destPath);
-
-
-
-
-
-
-
-
-
+            const builder = new Client(buildConfiguration[singleConfiguration],
+                singleConfiguration, sourcePath, destPath);
             builder.install(destPath);
             builder.link(destPath);
             if (publish) {
@@ -65,14 +56,18 @@ export async function ClientBuilder() {
             }
 
             setTimeout(() => {
-                const delPath = path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.ts');
-                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath, configurationItem.contractNameClient) + '/**/*.d.ts');
+                const delPath = path.normalize(path.join(configurationItem.buildPath,
+                    configurationItem.contractNameClient) + '/**/*.ts');
+                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath,
+                    configurationItem.contractNameClient) + '/**/*.d.ts');
 
-                del([delPath, delPathNegate]).then(paths => {
+                del([delPath, delPathNegate], { force: true }).then((paths) => {
 
+                    // tslint:disable-next-line:no-console
                     console.log('Deleted files and folders:\n', paths.join('\n'));
                     process.exit();
                 }).catch((error) => {
+                    // tslint:disable-next-line:no-console
                     console.error(error);
                     process.exit();
                 });
