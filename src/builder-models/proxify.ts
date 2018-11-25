@@ -75,12 +75,12 @@ export class Proxify {
 
         //find the @MethodConfig
         let indexOfMethodConfig = content.indexOf('@MethodConfig(');
-        let proxyDecorator = `@Proxy.ProxyClass('${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
+        let proxyDecorator = `@Proxy.ProxyClass('${packageName}', '${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
 
         let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
         if (classMarker.indexOf(',') > -1) {
             let arr = classMarker.split(',');
-            classMarker = arr[0] + arr[arr.length-1].substr(arr[arr.length-1].indexOf(')'));
+            classMarker = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
         }
         let classDefinition = proxyDecorator + classMarker + ' {\n';
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);

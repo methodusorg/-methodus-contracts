@@ -1,5 +1,5 @@
 {
-    "contracts/simple": {
+    "simple": {
         "contractNameServer": "@server/simple",
         "contractNameClient": "@client/simple",
         "buildPath": "./build_path/",

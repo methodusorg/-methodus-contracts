@@ -1,5 +1,5 @@
 {
-    "contracts/models": {
+    "models": {
         "contractNameServer": "@server/models",
         "contractNameClient": "@client/models",
         "buildPath": "./build_path/",

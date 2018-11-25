@@ -23,6 +23,7 @@
         ]
     },
     "exclude": [
+        "build_consumers",
         "build_path",
         "node_modules"
     ]
