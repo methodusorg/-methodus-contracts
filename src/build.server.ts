@@ -55,12 +55,13 @@ export async function ServerBuilder() {
             }
 
             setTimeout(() => {
-                const delPath = path.normalize(path.join(configurationItem.buildPath,
-                    configurationItem.contractNameServer) + '/**/*.ts');
-                const delPathNegate = '!' + path.normalize(path.join(configurationItem.buildPath,
-                    configurationItem.contractNameServer) + '/**/*.d.ts');
+                const baseDeletePath = path.join(configurationItem.buildPath,
+                    configurationItem.contractNameServer);
+                const delPath = path.normalize(baseDeletePath + '/**/*.ts');
+                const delPathNegate = '!' + path.normalize(baseDeletePath + '/**/*.d.ts');
+                const methodusPath = path.normalize(baseDeletePath + '/node_modules/@methodus');
 
-                del([delPath, delPathNegate], { force: true }).then((paths) => {
+                del([delPath, delPathNegate, methodusPath], { force: true }).then((paths) => {
                     // tslint:disable-next-line:no-console
                     console.log('Deleted files and folders:\n', paths.join('\n'));
                     process.exit();

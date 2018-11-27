@@ -10,6 +10,7 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
+        "@methodus/server": "latest",
         "@types/node": "^8.0.0"
     },
     "dependencies": {}
