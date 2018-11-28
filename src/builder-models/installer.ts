@@ -26,6 +26,13 @@ export class Installer {
 
                 throw (new Error('tsc error'));
             }
+
+            let prodInstallResult = this.shell.exec('yarn --production').code
+            console.log('----------------------------------------------------------------------');
+            console.log('installing production deps: ' + (prodInstallResult === 0));
+            if (prodInstallResult !== 0) {
+                throw (new Error('yarn error'));
+            }
         } catch (error) {
             this.shell.cd(cwd);
             throw (error);
