@@ -21,8 +21,8 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@methodus/client": "^1.0.1",
-        "@methodus/server": "^1.1.4"
+        "@methodus/client": "latest",
+        "@methodus/server": "latest"
     },
     "dependencies": {
         "@types/lodash": "^4.14.75",

@@ -76,19 +76,25 @@ import { MethodResult } from '@methodus/client';
             });
         }
 
-        if (packageName)
+        if (packageName) {
             fileHead = fileHead.replace(/\.\.\/\.\.\//g, packageName + '/');
+        }
 
-        let indexOfMethodConfig = content.indexOf('@MethodConfig(');
+        let indexOfMethodConfig = content.indexOf('@MethodConfigBase(');
+        if (indexOfMethodConfig === -1) {
+            indexOfMethodConfig = content.indexOf('@MethodConfig(');
+        }
+
         let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
         if (classMarker.indexOf(',') > -1) {
             let arr = classMarker.split(',');
-            classMarker = arr[0] + arr[arr.length-1].substr(arr[arr.length-1].indexOf(')'));
+            classMarker = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
         }
 
-
+        
         let classDefinition = classMarker + ' {\n';
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
+        classDefinition = classDefinition.replace(/\@MethodConfigBase/g, '@M.MethodConfigBase');
         classDefinition = classDefinition.replace(/\@MethodConfig/g, '@M.MethodConfig');
         classDefinition = classDefinition.replace(/, \[.*?\]/g, '');
         classDefinition += `\n public static base: string;`;
@@ -147,8 +153,8 @@ import { MethodResult } from '@methodus/client';
                 //try to resolve result value
                 const resultRegex = /\<MethodResult<([^\)]+)\>\>/
                 const m = resultRegex.exec(tuple.contract);
-                if(!m){
-                    throw(new Error('all methods should return a promise of MethodResult<> object'))
+                if (!m) {
+                    throw (new Error('all methods should return a promise of MethodResult<> object'))
                 }
                 if (m.length > 1) {
                     methodResult = `return {} as ${m[1]};`;
@@ -179,14 +185,11 @@ import { MethodResult } from '@methodus/client';
         //         notClean = false;
         // }
 
-        const replaceList = ['Method', 'Param', 'Proxy', 'MethodConfig', 'Body', 'Query', 'Response', 'Request', 'Files', 'Cookies', 'Headers', 'MethodResult', 'MethodError'];
+        const replaceList = ['Method', 'Param', 'Proxy', 'MethodConfig', 'MethodConfigBase', 'Body', 'Query', 'Response', 'Request', 'Files', 'Cookies', 'Headers', 'MethodResult', 'MethodError'];
         classBody = classBody.replace(/\Verbs./g, 'M.Verbs.');
 
         classBody = classBody.replace(/, \[.*?\]/g, '');
-        classBody = classBody.replace(/, @SecurityContext\(\) att: Tmla.ISecurityContext/g, '');
-
-        classBody = classBody.replace(/, @SecurityContext\(\) att/g, '');
-        classBody = classBody.replace(/@SecurityContext\(\) att: Tmla.ISecurityContext/g, '');
+        classBody = classBody.replace(/, @SecurityContext\(\) securityContext: any/g, '');
 
         replaceList.forEach((value: string) => {
             classBody = classBody.replace(new RegExp('@' + value, 'g'), '@M.' + value);

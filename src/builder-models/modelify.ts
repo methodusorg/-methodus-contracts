@@ -41,14 +41,8 @@ export class Modelify {
 
 
 
-            let content = fs.readFileSync(path.join(this.source, modelSource), 'utf-8');
-
-            if (this.isClient) {
-                content = content.replace(/@tmla-contracts\//g, '@tmla-client/');
-            }
-
-            //find the @MethodConfig
-
+            let content = fs.readFileSync(path.join(this.source, modelSource), 'utf-8');        
+          
             let customeSection = '';
 
             /*start custom*/
