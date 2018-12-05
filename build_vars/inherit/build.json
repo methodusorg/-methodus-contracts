@@ -13,14 +13,17 @@
         "contracts": {
             "Inherit": {
                 "path": "./controllers/inherit.controller.ts"
+            },
+            "Inherit2": {
+                "path": "./controllers/inherit2.controller.ts"
+            },
+            "BaseController": {
+                "path": "./controllers/basecontroller.ts"
             }
         },
         "includes": {
             "Mock": {
                 "path": "../../build_mocks/mock.ts"
-            },
-            "BaseController": {
-                "path": "./controllers/base.controller.ts"
             }
         },
         "dependencies": {}

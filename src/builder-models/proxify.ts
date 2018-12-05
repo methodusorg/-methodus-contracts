@@ -41,7 +41,7 @@ export class Proxify {
         shell.mkdir('-p', this.target);
         console.log('> Generating contract:', className, packageName);
 
-        let fileHead = `import { Proxy, logger, Method, MethodPipe, MethodConfig, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies, Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
+        let fileHead = `import { Proxy, Method, MethodPipe, MethodConfig, MethodConfigBase,MethodConfigExtend, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies, Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
 
         /*start custom*/
         let startCustom = content.indexOf('/*start custom*/');
@@ -74,7 +74,11 @@ export class Proxify {
         }
 
         //find the @MethodConfig
-        let indexOfMethodConfig = content.indexOf('@MethodConfig(') || content.indexOf('@MethodConfigBase(');
+        let indexOfMethodConfig = content.indexOf('@MethodConfigBase(')
+        if (indexOfMethodConfig === -1) {
+            indexOfMethodConfig = content.indexOf('@MethodConfig(')
+        }
+
         let proxyDecorator = `@Proxy.ProxyClass('${packageName}', '${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
 
         let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));

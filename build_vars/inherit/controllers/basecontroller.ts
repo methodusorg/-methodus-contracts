@@ -1,9 +1,9 @@
 
-import { Method, MethodConfig, MethodResult, Verbs, Headers, Query, MethodError, Param, MethodMock } from '@methodus/server';
+import { Method, MethodConfigBase, MethodResult, Verbs, Headers, Query, MethodError, Param, MethodMock } from '@methodus/server';
 import { Mock } from '../';
 
 
-
+@MethodConfigBase('BaseController')
 export class BaseController {
     @MethodMock(Mock.simple)
     @Method(Verbs.Get, '/simple/get')

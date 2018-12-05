@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@methodus/data": "^1.0.3"
+    "@methodus/data": "^1.0.3",
+    "@methodus/server": "latest"
   }
 }
