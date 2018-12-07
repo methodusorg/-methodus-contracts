@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "@methodus/describe": "^1.1.7",
-    "@methodus/server": "^1.1.10",
+    "@methodus/server": "latest",
     "@server/inherit": "file:../../../build_path/@server/inherit"
   }
 }

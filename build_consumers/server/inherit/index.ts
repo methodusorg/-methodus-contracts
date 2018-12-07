@@ -6,9 +6,9 @@ import {
 
 (global as any).methodus = {
     config: {
-        'Inherit': { 'transport': 'Http' },
-        'Inherit2': { 'transport': 'Http' },
-        'BaseController': { 'transport': 'Http' },
+        'Inherit': { 'transport': 'Http', resolver: 'http://localhost:6200' },
+        'Inherit2': { 'transport': 'Http', resolver: 'http://localhost:6200' },
+        'BaseController': { 'transport': 'Http', resolver: 'http://localhost:6200' },
     }
 };
 import { Inherit, Inherit2 } from '@server/inherit';
@@ -27,11 +27,21 @@ class SetupServer extends ConfiguredServer {
 (async () => {
     new SetupServer();
     setTimeout(async () => {
-        const result = await Inherit.get('1111');
-        console.log(result);
+        console.log('calling inherit contract');
+        try {
+            const result = await Inherit.get('1111');
+            console.log(result);
+        } catch (error) {
+            console.error(error);
+        }
 
-        const result2 = await Inherit2.get('1111');
-        console.log(result2);
+        try {
+            console.log('calling inherit2 contract');
+            const result2 = await Inherit2.get('2222');
+            console.log(result2);
+        } catch (error) {
+            console.error(error);
+        }
         process.exit(0);
     }, 1000);
 })();
