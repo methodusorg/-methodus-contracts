@@ -1,0 +1,38 @@
+{
+    "name": "@methodus/contracts",
+    "version": "1.0.2",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "pretest": "tsc",
+        "test": "npm run test:server",
+        "prepublishOnly": "npm version patch",
+        "xtest": "set test='true'&alsatian tests/*.spec.js ",
+        "test:server": "npm run test:server:simple & npm run test:server:models & npm run test:server:inherit ",
+        "test:server:simple": "node build.js ./build_vars/simple/build.json",
+        "test:server:models": "node build.js ./build_vars/models/build.json",
+        "test:server:inherit": "node build.js ./build_vars/inherit/build.json",
+        "test:server:consumer:simple": "node build_consumers/server/simple/index.js",
+        "test:client": "npm run test:client:simple & npm run test:client:models & npm run test:client:inherit ",
+        "test:client:simple": "node client.js ./build_vars/simple/build.json",
+        "test:client:models": "node client.js ./build_vars/models/build.json",
+        "test:client:inherit": "node client.js ./build_vars/inherit/build.json"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@methodus/client": "latest",
+        "@methodus/server": "latest"
+    },
+    "dependencies": {
+        "@types/lodash": "^4.14.75",
+        "@types/node": "^8.0.31",
+        "alsatian": "^2.0.0",
+        "colors": "^1.1.2",
+        "del": "^3.0.0",
+        "glob": "^7.1.3",
+        "jsdoc-regex": "^1.0.1",
+        "shelljs": "^0.7.8",
+        "typescript": "^2.5.2"
+    }
+}

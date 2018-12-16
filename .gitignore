@@ -1,0 +1,10 @@
+*.js
+*.js.map
+package-lock.json
+yarn.lock
+!.vscode
+!tests/config/*.js
+node_modules/
+*.d.ts
+logs
+build_path/

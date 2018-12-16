@@ -1,0 +1,17 @@
+{
+    "name": "${name}",
+    "version": "${version}",
+    "description": "",
+    "main": "index",
+    "scripts": {
+        "build": "tsc",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@methodus/server": "latest",
+        "@types/node": "^8.0.0"
+    },
+    "dependencies": {}
+}
