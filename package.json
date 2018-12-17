@@ -4,6 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
+        "check-coverage": "nyc --reporter=lcov --reporter=html npm run xtest && nyc report",
         "pretest": "tsc",
         "test": "npm run test:server",
         "prepublishOnly": "npm version patch",
@@ -16,13 +17,15 @@
         "test:client": "npm run test:client:simple & npm run test:client:models & npm run test:client:inherit ",
         "test:client:simple": "node client.js ./build_vars/simple/build.json",
         "test:client:models": "node client.js ./build_vars/models/build.json",
-        "test:client:inherit": "node client.js ./build_vars/inherit/build.json"
+        "test:client:inherit": "node client.js ./build_vars/inherit/build.json",
+        "sonar": "sonar-scanner.bat -Dsonar.projectKey=nodulusteam_-methodus-contracts -Dsonar.organization=nodulusteam-github -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=e01e7adc2647251c0651a3bab28de27b479b4432"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "@methodus/client": "latest",
-        "@methodus/server": "latest"
+        "@methodus/server": "latest",
+        "nyc": "^13.1.0"
     },
     "dependencies": {
         "@types/lodash": "^4.14.75",

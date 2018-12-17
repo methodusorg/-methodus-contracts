@@ -6,15 +6,15 @@ import * as del from 'del';
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
-export async function ServerBuilder() {
+export async function ServerBuilder(contract?: string) {
 
     let buildConfiguration = null;
 
     // tslint:disable-next-line:no-console
     console.log(colors.blue('> methodus contract builder.'));
     let publish = false;
-    if (process.argv.length === 2) {
-        buildConfiguration = require('../build.json') as Configuration;
+    if (contract) {
+        buildConfiguration = require(contract) as Configuration;
     } else {
         const filePath = path.resolve(path.join(process.cwd(), process.argv[2]))
         // tslint:disable-next-line:no-console

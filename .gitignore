@@ -8,3 +8,7 @@ node_modules/
 *.d.ts
 logs
 build_path/
+.nyc_output/002f1132-9206-4a5f-aa7f-7d3df0f0df58.json
+.nyc_output/
+.scannerwork/
+coverage/

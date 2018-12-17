@@ -26,9 +26,7 @@
             "request": "launch",
             "name": "T | Test server contracts | Simple",
             "program": "${workspaceRoot}\\build_consumers\\server\\simple\\index.js",
-            "args": [
-               
-            ],
+            "args": [],
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
             "outFiles": [],
@@ -38,7 +36,6 @@
                 "NODE_ENV": "debug"
             }
         },
-
         {
             "type": "node",
             "request": "launch",
@@ -107,7 +104,6 @@
                 "NODE_ENV": "debug"
             }
         },
-       
         {
             "type": "node",
             "request": "launch",
@@ -142,8 +138,6 @@
                 "NODE_ENV": "debug"
             }
         },
-
-
         {
             "type": "node",
             "request": "launch",
@@ -214,6 +208,24 @@
                 "NODE_CONFIG_ENV": "local",
                 "NODE_CONFIG_DIR": "${workspaceRoot}/tests/config/",
                 "NODE_LOG_DIR": "./logs",
+                "PORT": "2065"
+            }
+        },
+        {
+            "request": "launch",
+            "console": "internalConsole",
+            "name": "T | Run Build Contracts test",
+            "type": "node",
+            "program": "${workspaceRoot}/node_modules/alsatian/cli/alsatian-cli",
+            "stopOnEntry": false,
+            "args": [
+                "tests/build.spec.js"
+            ],
+            "sourceMaps": true,
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": null,
+            "env": {
+                "NODE_ENV": "debug",
                 "PORT": "2065"
             }
         }

@@ -6,7 +6,7 @@ import * as del from 'del';
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
-export async function ClientBuilder() {
+export async function ClientBuilder(contract) {
     var buildConfiguration = null;
     // process.argv.forEach((val, index) => {
     //     console.log(`${index}: ${val}`);
@@ -14,9 +14,12 @@ export async function ClientBuilder() {
 
     console.log(colors.blue('> methodus client contract builder.'));
     let publish = false;
-    if (process.argv.length === 2) {
-        buildConfiguration = <Configuration>require('../build.json');
+    if (contract) {
+        buildConfiguration = require(contract) as Configuration;
     }
+    // if (process.argv.length === 2) {
+    //     buildConfiguration = <Configuration>require('../build.json');
+    // }
     else {
         let filePath = path.resolve(path.join(process.cwd(), process.argv[2]))
         console.log(colors.green('> loading build configuration from:'), filePath);
