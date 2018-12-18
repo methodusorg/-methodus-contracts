@@ -91,7 +91,7 @@ import { MethodResult } from '@methodus/client';
             classMarker = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
         }
 
-        
+
         let classDefinition = classMarker + ' {\n';
         //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
         classDefinition = classDefinition.replace(/\@MethodConfigBase/g, '@M.MethodConfigBase');
@@ -116,28 +116,32 @@ import { MethodResult } from '@methodus/client';
             }
             m.forEach((match, groupIndex) => {
 
-                if (!match)
+                if (!match) {
                     return;
-
+                }
 
                 if (match.indexOf('/*') === 0) {
                     Tuple.comment = match;
                 }
 
                 if (match.indexOf('@MethodMock') === 0) {
-                    Tuple.result = `  
-                    const methodArgs = arguments;
-                    return new Promise<any>(function (resolve, reject) {
-                        resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
-                    });`
+                    Tuple.mock = `${mockRegex.exec(match)[1]}`;
                 }
+                // const theargs = [];
+
+                // Tuple.result = `  
+                // const methodArgs = arguments;
+                // return new Promise<any>(function (resolve, reject) {
+                //     resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
+                // });`
+
                 if (match.indexOf('@Method(') === 0) {
                     //find return type
                     Tuple.method = match;
                 }
                 if (match.indexOf('public') === 0) {
                     //find return type
-                    Tuple.contract = match.replace(' async ', ' ');
+                    Tuple.contract = match;///.replace(' async ', ' ');
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
@@ -145,36 +149,54 @@ import { MethodResult } from '@methodus/client';
         }
 
 
+
         Object.values(mocks_and_methods).forEach((tuple: any) => {
             if (tuple.comment) {
                 classBody += `\n  ${tuple.comment}`;
             }
+            if (tuple.mock) {
+
+                //split mapped args
+                const str = tuple.contract.split('@');
+                const args = str.map((param) => {
+                    if (param.indexOf(':') === -1) {
+                        return
+                    }
+                    return param.split(')')[1].split(':')[0];
+
+                }).join(', ');
+
+                Tuple.result = `  
+               
+                return new Promise<any>(function (resolve, reject) {
+                    resolve(${tuple.mock}.apply(this, [${args}]));
+                });`
+
+
+            }
             if (tuple.method) {
                 //try to resolve result value
-                const resultRegex = /\<MethodResult<([^\)]+)\>\>/
+
+                //const resultRegex = /\<MethodResult<([^\)]+)\>\>/;
+                const resultRegex = /(\<.*\>)./;
+
                 const m = resultRegex.exec(tuple.contract);
                 if (!m) {
                     throw (new Error('all methods should return a promise of MethodResult<> object'))
                 }
                 if (m.length > 1) {
-                    methodResult = `return {} as ${m[1]};`;
-                    tuple.contract = tuple.contract.replace(m[0], `<${m[1]}>`);
+                    let returnType = m[1];
+                    if (returnType.startsWith('<')) {
+                        returnType = returnType.substr(1, returnType.length - 2);
+                    }
+                    methodResult = `return new ${returnType}({});`;
+                    //tuple.contract = tuple.contract.replace(m[0], `<${returnType}>`);
                 }
-
-
-
                 classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)} 
         }
         `;
             }
         });
-
-
-
-
-
-
-
 
         // while (notClean) {
         //     let methodHead = `    ` + content.substring(loc, content.indexOf('{', loc + 1) + 1);

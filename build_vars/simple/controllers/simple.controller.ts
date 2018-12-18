@@ -5,7 +5,7 @@ import { Mock } from '../../../build_mocks/mock';
 export class Simple {
     @MethodMock(Mock.simple)
     @Method(Verbs.Get, '/simple/get')
-    public static async get(@Param('id') id: string): Promise<MethodResult<any>> {
+    public static async get(@Param('id') id: string): Promise<MethodResult> {
         return new MethodResult({});
     }
 }
