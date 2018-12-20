@@ -3,19 +3,21 @@ import {
     ServerConfiguration, PluginConfiguration,
     ClientConfiguration, ConfiguredServer, MethodType, ServerType,
 } from '@methodus/server';
+const URL = 'http://localhost:6200';
+const HTTP = 'Http';
 
 (global as any).methodus = {
     config: {
-        'Inherit': { 'transport': 'Http', resolver: 'http://localhost:6200' },
-        'Inherit2': { 'transport': 'Http', resolver: 'http://localhost:6200' },
-        'BaseController': { 'transport': 'Http', resolver: 'http://localhost:6200' },
-    }
+        Inherit: { transport: HTTP, resolver: URL },
+        Inherit2: { transport: HTTP, resolver: URL },
+        BaseController: { transport: HTTP, resolver: URL },
+    },
 };
 import { Inherit, Inherit2 } from '@server/inherit';
 
 @ServerConfiguration(ServerType.Express, { port: process.env.PORT || 6690 })
-@ClientConfiguration(Inherit, MethodType.Http, ServerType.Express, 'http://localhost:6200')
-@ClientConfiguration(Inherit2, MethodType.Http, ServerType.Express, 'http://localhost:6200')
+@ClientConfiguration(Inherit, MethodType.Http, ServerType.Express, URL)
+@ClientConfiguration(Inherit2, MethodType.Http, ServerType.Express, URL)
 // @PluginConfiguration('@methodus/describe')
 class SetupServer extends ConfiguredServer {
     constructor() {
@@ -23,8 +25,8 @@ class SetupServer extends ConfiguredServer {
     }
 }
 
-
 (async () => {
+    // tslint:disable-next-line:no-unused-expression
     new SetupServer();
     setTimeout(async () => {
         console.log('calling inherit contract');

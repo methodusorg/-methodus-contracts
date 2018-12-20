@@ -6,35 +6,35 @@ import { Query as DataQuery } from '@methodus/data';
 export class DataController {
 
     @Method(Verbs.Get, '/id/:id')
-    public static async get(@Param('id') id: string): Promise<MethodResult<any>> {
+    public static async get(@Param('id') id: string): Promise<MethodResult> {
         const repo = (this as any).methodus.repository;
         const item = await repo.get(id);
         return new MethodResult(item);
     }
 
     @Method(Verbs.Post, '/insert')
-    public static async create(@Body('record') record: any): Promise<MethodResult<any>> {
+    public static async create(@Body('record') record: any): Promise<MethodResult> {
         const repo = (this as any).methodus.repository;
         const item = await repo.insert(record);
         return new MethodResult(item);
     }
 
     @Method(Verbs.Post, '/id/:id')
-    public static async update(@Param('id') id: string, @Body('record') record: any): Promise<MethodResult<any>> {
+    public static async update(@Param('id') id: string, @Body('record') record: any): Promise<MethodResult> {
         const repo = (this as any).methodus.repository;
         const item = await repo.update({ _id: id }, record);
         return new MethodResult(item);
     }
 
     @Method(Verbs.Delete, '/id/:id')
-    public static async delete(@Param('id') id: string): Promise<MethodResult<any>> {
+    public static async delete(@Param('id') id: string): Promise<MethodResult> {
         const repo = (this as any).methodus.repository;
         const item = await repo.delete({ _id: id });
         return new MethodResult(item);
     }
 
     @Method(Verbs.Post, '/query')
-    public static async query(@Body('query') queryObject: any): Promise<MethodResult<any>> {
+    public static async query(@Body('query') queryObject: any): Promise<MethodResult> {
         const repo = (this as any).methodus.repository;
         const query = new DataQuery(repo.odm.collectionName);
         query.filter(queryObject);

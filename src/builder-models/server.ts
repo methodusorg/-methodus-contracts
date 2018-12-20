@@ -2,12 +2,11 @@ import { Proxify } from './proxify';
 import { Modelify } from './modelify';
 import { UseTemplate, Exportify, ModelsIndex, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
-import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
+import { Configuration } from './interfaces';
 
 import * as path from 'path';
-import * as colors from 'colors';
 import * as fs from 'fs';
-
+const PKGJSON = 'package.json';
 
 export class Server {
     modelify: Modelify;
@@ -19,36 +18,49 @@ export class Server {
         this.proxify = new Proxify(configuration, source, target);
         this.Installer = new Installer();
 
-        for (let modelKey in configuration.models) {
-            const model = configuration.models[modelKey];
-            this.modelify.ProxifyFromModel(model.path, modelKey, packageName);
+        if (configuration.models) {
+            Object.keys(configuration.models).forEach((modelKey) => {
+                const model = configuration.models[modelKey];
+                this.modelify.ProxifyFromModel(model.path, modelKey, packageName);
+            });
         }
 
-        for (let contractKey in configuration.contracts) {
-            const contract = configuration.contracts[contractKey];
-            this.proxify.ProxifyFromFile(contract.path, contractKey, packageName);
+        if (configuration.contracts) {
+            Object.keys(configuration.contracts).forEach((contractKey) => {
+                const contract = configuration.contracts[contractKey];
+                this.proxify.ProxifyFromFile(contract.path, contractKey, packageName);
 
+            });
         }
 
-        for (let contractKey in configuration.bindings) {
-            const contract = configuration.bindings[contractKey];
-            this.proxify.ProxifyFromBinding(contract.path, contractKey, packageName);
+        if (configuration.bindings) {
+            Object.keys(configuration.bindings).forEach((contractKey) => {
+                const contract = configuration.bindings[contractKey];
+                this.proxify.ProxifyFromBinding(contract.path, contractKey, packageName);
+            });
         }
 
-        for (let contractKey in configuration.includes) {
-            const contract = configuration.includes[contractKey];
-            this.proxify.CopyFromFile(contract.path, contractKey, packageName);
+        if (configuration.includes) {
+            Object.keys(configuration.includes).forEach((contractKey) => {
+                const contract = configuration.includes[contractKey];
+                this.proxify.CopyFromFile(contract.path, contractKey, packageName);
+            });
         }
-        for (let contractKey in configuration.declarations) {
-            const contract = configuration.declarations[contractKey];
-            this.proxify.CopyFromFile(contract.path, contractKey, packageName);
+
+        if (configuration.declarations) {
+            Object.keys(configuration.declarations).forEach((contractKey) => {
+                const contract = configuration.declarations[contractKey];
+                this.proxify.CopyFromFile(contract.path, contractKey, packageName);
+            });
         }
 
         Exportify(configuration, target, packageName);
 
-        let originalPackage = require(path.join(source, 'package.json'));
-        UseTemplate('_package.json', 'package.json', target, { name: configuration.contractNameServer, version: originalPackage.version });
-        UseTemplate('_tsconfig.json', 'tsconfig.json', target, { name: configuration.contractNameServer, version: originalPackage.version });
+        const originalPackage = require(path.join(source, PKGJSON));
+        UseTemplate('_package.json', PKGJSON, target,
+            { name: configuration.contractNameServer, version: originalPackage.version });
+        UseTemplate('_tsconfig.json', 'tsconfig.json', target,
+            { name: configuration.contractNameServer, version: originalPackage.version });
         UseTemplate('_.gitignore', '.gitignore', target);
         UseTemplate('_.npmignore', '.npmignore', target);
         if (configuration.npmrc) {
@@ -57,18 +69,15 @@ export class Server {
             UseTemplate('_.npmrc', '.npmrc', target);
         }
 
-        //add, dependencies: configuration.dependencies
-        //load package.json
         if (configuration.dependencies) {
-            const packageData = require(path.join(target, 'package.json'));
+            const packageData = require(path.join(target, PKGJSON));
             packageData.dependencies = configuration.dependencies;
-            fs.writeFileSync(path.join(path.join(target, 'package.json')), JSON.stringify(packageData, null, 2));
-
+            fs.writeFileSync(path.join(path.join(target, PKGJSON)), JSON.stringify(packageData, null, 2) + '\n');
         }
 
         ModelsIndex(configuration, source, path.join(target, 'models'), packageName);
-
     }
+
     public link(dest) {
         this.Installer.link(dest);
     }

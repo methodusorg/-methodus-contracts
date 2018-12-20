@@ -7,32 +7,29 @@ import * as del from 'del';
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
 export async function ClientBuilder(contract?: string) {
-    var buildConfiguration = null;
+    let buildConfiguration = null;
 
     console.log(colors.blue('> methodus client contract builder.'));
     let publish = false;
     if (contract) {
         buildConfiguration = require(contract) as Configuration;
-    }
-
-    else {
-        let filePath = path.resolve(path.join(process.cwd(), process.argv[2]))
+    } else {
+        const filePath = path.resolve(path.join(process.cwd(), process.argv[2]));
         console.log(colors.green('> loading build configuration from:'), filePath);
-        buildConfiguration = <KeysConfiguration>require(filePath);
+        buildConfiguration = require(filePath) as KeysConfiguration;
         // singleTarget = process.argv[3];
         publish = process.argv[3] === '-p' || publish;
     }
 
-    let checkList = [];
+    const checkList = [];
     Object.keys(buildConfiguration).forEach(async (singleConfiguration) => {
         const configurationItem = buildConfiguration[singleConfiguration];
-
-
         console.log(colors.green(`> ${singleConfiguration}`));
         try {
             let sourcePath = process.cwd();
-            if (!configurationItem.buildPath)
+            if (!configurationItem.buildPath) {
                 configurationItem.buildPath = '../../';
+            }
 
             if (configurationItem.path) {
                 sourcePath = path.resolve(configurationItem.path);
@@ -72,18 +69,13 @@ export async function ClientBuilder(contract?: string) {
 
             }, 100);
 
-
-
-
             checkList.push(`${singleConfiguration}: ok`);
         } catch (error) {
             checkList.push(`${singleConfiguration}: error`);
             console.error(error);
         }
 
-    })
+    });
     console.log(checkList.join('\n'));
     console.log('completed build plan, exiting.');
-
-
 }

@@ -1,6 +1,6 @@
 {
-    "name": "${name}",
-    "version": "${version}",
+    "name": "{name}",
+    "version": "{version}",
     "description": "",
     "main": "index",
     "scripts": {

@@ -10,18 +10,14 @@ export interface IncludeConfiguration {
     path: string;
 }
 
-
 export interface DeclarationConfiguration {
     path: string;
 }
-
-
 
 export interface BindindConfiguration {
     server: string;
     path: string;
 }
-
 
 export interface Configuration {
     buildPath: string;

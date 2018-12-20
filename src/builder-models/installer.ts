@@ -1,7 +1,4 @@
-const shelljs = require('shelljs');
-import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
-
-
+import * as shelljs from 'shelljs';
 export class Installer {
     shell: any;
     constructor() {
@@ -12,13 +9,13 @@ export class Installer {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
         try {
-            let intsallResult = this.shell.exec('yarn').code
+            const intsallResult = this.shell.exec('yarn').code;
             console.log('----------------------------------------------------------------------');
             console.log('installing deps: ' + (intsallResult === 0));
             if (intsallResult !== 0) {
                 throw (new Error('yarn error'));
             }
-            let compileResult = this.shell.exec('tsc').code
+            const compileResult = this.shell.exec('tsc').code;
             console.log('compiling generated code: ' + (compileResult === 0));
             console.log('----------------------------------------------------------------------');
 
@@ -27,7 +24,7 @@ export class Installer {
                 throw (new Error('tsc error'));
             }
 
-            let prodInstallResult = this.shell.exec('yarn --production').code
+            const prodInstallResult = this.shell.exec('yarn --production').code;
             console.log('----------------------------------------------------------------------');
             console.log('installing production deps: ' + (prodInstallResult === 0));
             if (prodInstallResult !== 0) {
@@ -39,10 +36,7 @@ export class Installer {
         } finally {
             this.shell.cd(cwd);
         }
-
-
     }
-
 
     public link(destFolder) {
         const cwd = process.cwd();
@@ -56,6 +50,7 @@ export class Installer {
 
         this.shell.cd(cwd);
     }
+
     public publish(destFolder) {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
@@ -65,5 +60,4 @@ export class Installer {
         }
         this.shell.cd(cwd);
     }
-
 }

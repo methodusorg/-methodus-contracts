@@ -1,92 +1,71 @@
-const excludedProps = ['constructor'];
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shelljs from 'shelljs';
-import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
-import { ModelSchema, ModelSchemaNode } from './ModelSchema';
-
-//import { ODM } from '@tmla/data';
-
-
+import { HEADER, Configuration } from './interfaces';
+import { ModelSchema } from './ModelSchema';
 
 const excludeList = ['collectionName', 'transform'];
-
-
 export class Modelify {
     buildConfiguration: Configuration;
     allModels: any;
     source: string;
     target: string;
-    isClient: boolean = false;
-    constructor(Configuration: Configuration, source, target, isClient?) {
+    isClient = false;
+    constructor(configuration: Configuration, source: string, target: string, isClient?: boolean) {
         this.source = source;
         this.target = target;
         this.isClient = isClient;
-        this.buildConfiguration = Configuration;
+        this.buildConfiguration = configuration;
         if (this.buildConfiguration.models) {
             this.allModels = Object.keys(this.buildConfiguration.models);
         }
-
     }
 
     ProxifyFromModel(modelSource: any, className: string, packageName: string) {
-
-
-
         shelljs.mkdir('-p', this.target);
         console.log('Generating Model for:', className);
         let modelBody = '';
         try {
-
-
-
-
-            let content = fs.readFileSync(path.join(this.source, modelSource), 'utf-8');        
-          
+            const content = fs.readFileSync(path.join(this.source, modelSource), 'utf-8');
             let customeSection = '';
-
             /*start custom*/
             const openPhrase = '/*start custom*/', closePhrase = '/*end custom*/';
-            let startCustom = content.indexOf(openPhrase);
-            let endCustom = content.indexOf(closePhrase);
+            const startCustom = content.indexOf(openPhrase);
+            const endCustom = content.indexOf(closePhrase);
             if (startCustom > 0) {
                 customeSection += content.substring(startCustom + openPhrase.length, endCustom);
                 customeSection += '\n';
             }
 
-
             const modelSchema = new ModelSchema(className);
             const modelRequire = require(path.join(this.source, modelSource).replace('.ts', ''));
             let importRow = '';
             let importTypes = [];
-            for (var modelClass in modelRequire) {
-                const innerClass = modelRequire[modelClass];
+            Object.keys(modelRequire).forEach((modelClassKey) => {
+                const innerClass = modelRequire[modelClassKey];
                 const odm = innerClass.odm;
                 if (odm) {
                     importTypes = this.concatImportTypes(odm, importTypes);
-                    modelBody += `export interface ${modelClass} {\n`
-                    this.filterProps(innerClass.odm.fields).forEach(odmItem => {
+                    modelBody += `export interface ${modelClassKey} {\n`;
+                    this.filterProps(innerClass.odm.fields).forEach((odmItem) => {
                         modelSchema.properties[this.fixProperty(odm.fields[odmItem])] = odm.fields[odmItem];
-                        modelBody += `${this.fixProperty(odm.fields[odmItem])}?: ${this.parseType(odm.fields[odmItem].type, importTypes)};\n`
+                        // tslint:disable-next-line:max-line-length
+                        modelBody += `${this.fixProperty(odm.fields[odmItem])}?: ${this.parseType(odm.fields[odmItem].type, importTypes)};\n`;
                     });
                     modelBody += `}\n`;
                 }
+            });
 
-
-            }
             if (importTypes.length) {
                 importRow = `import { ${importTypes.join(',')} } from '../';\n`;
             }
 
             shelljs.mkdir('-p', path.join(this.target, 'models'));
-            fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.ts`), HEADER + importRow + customeSection + modelBody);
-            //fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.schema`), JSON.stringify(modelSchema, null, 2));
-
+            fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.ts`),
+                HEADER + importRow + customeSection + modelBody + '\n');
         } catch (ex) {
             console.error(ex);
-
         }
-
     }
 
     capitalize(str) {
@@ -95,34 +74,34 @@ export class Modelify {
     }
 
     filterProps(odm) {
-        let filtered = Object.keys(odm).filter(prop => excludeList.indexOf(prop) === -1);
-        console.log(`> fields: ${filtered}`)
+        const filtered = Object.keys(odm).filter((prop) => excludeList.indexOf(prop) === -1);
+        console.log(`> fields: ${filtered}`);
         return filtered;
     }
 
     fixProperty(prop) {
-        let name = prop.displayName || prop.propertyKey;
+        const name = prop.displayName || prop.propertyKey;
         return name ? name.replace(/\./g, '_') : '';
     }
     concatImportTypes(odm, importTypes) {
-        for (let type in odm.fields) {
+
+        Object.keys(odm.fields).forEach((type) => {
             let modelName = odm.fields[type].type;
-            if (modelName) { //we have a type
-                if (this.allModels.indexOf(modelName) > -1) { //the type is one of the Models in  the package
-                    if (!modelName.endsWith('Model')) {//fix the Model suffix -- temporay solution
+            if (modelName) {
+                if (this.allModels.indexOf(modelName) > -1) { // the type is one of the Models in  the package
+                    if (!modelName.endsWith('Model')) {// fix the Model suffix -- temporay solution
                         modelName = modelName + 'Model';
                     }
-                    if (importTypes.indexOf(modelName) === -1) { //don't insert it twice
+                    if (importTypes.indexOf(modelName) === -1) { // don't insert it twice
                         importTypes.push(modelName); // added to import list
                     }
                 }
             }
-
-        }
+        });
         return importTypes;
     }
 
-    parseType(typeName: string, importTypes: Array<string>) {
+    parseType(typeName: string, importTypes: string[]) {
         switch (typeName) {
             case 'Array':
                 return 'Array<any>';
@@ -138,9 +117,3 @@ export class Modelify {
         return typeName.toLowerCase();
     }
 }
-
-
-
-
-
-

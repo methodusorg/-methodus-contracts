@@ -1,5 +1,5 @@
 
-import { Simple } from '@client/simple';
+import { Simple } from '@client-contracts/simple';
 import { Models } from '@client/models';
 // import { Inherit } from '@client/inherit';
 

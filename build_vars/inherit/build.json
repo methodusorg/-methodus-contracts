@@ -26,6 +26,13 @@
                 "path": "../../build_mocks/mock.ts"
             }
         },
-        "dependencies": {}
+        "bindings": {
+            "Bind": {
+                "path": "./controllers/bind.controller.ts"
+            }
+        },
+        "dependencies": {
+            "debug": "*"
+        }
     }
 }

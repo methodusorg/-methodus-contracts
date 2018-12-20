@@ -1,13 +1,12 @@
-const excludedProps = ['constructor'];
-const debug = require('debug')('contracts');
-const path = require('path');
-const fs = require('fs');
-var shell = require('shelljs');
-import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
-import * as jsdoc from 'jsdoc-regex';
+
+import * as path from 'path';
+import * as fs from 'fs';
+import * as shell from 'shelljs';
+
+import { HEADER, Configuration } from './interfaces';
 
 export class Proxify {
-    configuration: Configuration
+    configuration: Configuration;
     source: string;
     target: string;
     constructor(configuration: Configuration, source, target) {
@@ -23,29 +22,29 @@ export class Proxify {
 
     splice(str, start, delCount, newSubStr) {
         return str.slice(0, start) + newSubStr + str.slice(start + Math.abs(delCount));
-    };
-
+    }
 
     CopyFromFile(controllerPath: any, className: string, packageName?: string) {
-        let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
+        const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
         shell.mkdir('-p', this.target);
         console.log('> Copying file:', className, packageName);
-        let fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
+        const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'includes'));
-        fs.writeFileSync(fullPath, HEADER + content);
+        fs.writeFileSync(fullPath, HEADER + content + '\n');
     }
 
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
         // read controller file
-        let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
+        const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
         shell.mkdir('-p', this.target);
         console.log('> Generating contract:', className, packageName);
 
+        // tslint:disable-next-line:max-line-length
         let fileHead = `import { Proxy, Method, MethodPipe, MethodConfig, MethodConfigBase,MethodConfigExtend, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies, Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
 
         /*start custom*/
-        let startCustom = content.indexOf('/*start custom*/');
-        let endCustom = content.indexOf('/*end custom*/');
+        const startCustom = content.indexOf('/*start custom*/');
+        const endCustom = content.indexOf('/*end custom*/');
         if (startCustom > 0) {
             fileHead += content.substring(startCustom, endCustom);
             fileHead += '/*end custom*/\n';
@@ -53,7 +52,8 @@ export class Proxify {
 
         if (this.configuration.models) {
             const keys = Object.keys(this.configuration.models);
-            fileHead += `import { ${keys.map((elem: string) => { return (elem.endsWith('Model') ? elem : elem + 'Model') }).join(', ')} } from '../';\n`;
+            // tslint:disable-next-line:max-line-length
+            fileHead += `import { ${keys.map((elem: string) => (elem.endsWith('Model') ? elem : elem + 'Model')).join(', ')} } from '../';\n`;
         }
 
         if (this.configuration.includes) {
@@ -61,58 +61,51 @@ export class Proxify {
                 const currentInclude = this.configuration.includes[key];
                 if (currentInclude.alias) {
                     fileHead += `import * as ${currentInclude.alias} from '../';\n`;
-                }
-                else {
+                } else {
                     fileHead += `import { ${key} } from '../';\n`;
                 }
-            })
+            });
         }
-
 
         if (packageName) {
             fileHead = fileHead.replace(/\.\.\/\.\.\//g, packageName + '/');
         }
 
-        //find the @MethodConfig
-        let indexOfMethodConfig = content.indexOf('@MethodConfigBase(')
+        let indexOfMethodConfig = content.indexOf('@MethodConfigBase(');
         if (indexOfMethodConfig === -1) {
-            indexOfMethodConfig = content.indexOf('@MethodConfig(')
+            indexOfMethodConfig = content.indexOf('@MethodConfig(');
         }
 
-        let proxyDecorator = `@Proxy.ProxyClass('${packageName}', '${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
+        // tslint:disable-next-line:max-line-length
+        const proxyDecorator = `@Proxy.ProxyClass('${packageName}', '${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
 
         let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
         if (classMarker.indexOf(',') > -1) {
-            let arr = classMarker.split(',');
+            const arr = classMarker.split(',');
             classMarker = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
         }
-        let classDefinition = proxyDecorator + classMarker + ' {\n';
-        //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
-
-        let notClean = true;
-        let methodResult = `return new MethodResult({} as any);`;
+        const classDefinition = `${proxyDecorator}${classMarker} {\n`;
+        const methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
 
-
+        // tslint:disable-next-line:max-line-length
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;
         let m;
         const mocks_and_methods = {};
-        let jsonSchema = {};
+        const jsonSchema = {};
 
         let Tuple: any = {};
+        // tslint:disable-next-line:no-conditional-assignment
         while ((m = regex.exec(content)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
             m.forEach((match, groupIndex) => {
-
                 if (!match) {
                     return;
                 }
-
-
                 if (match.indexOf('@MethodMock') === 0) {
                     Tuple.mock = true;
                     Tuple.result = `
@@ -144,41 +137,39 @@ export class Proxify {
             });
         }
 
-
         Object.values(mocks_and_methods).forEach((tuple: any) => {
             jsonSchema[tuple.method] = jsonSchema[tuple.method] || {};
             if (tuple.comment) {
-                jsonSchema[tuple.method].comment = tuple.comment
+                jsonSchema[tuple.method].comment = tuple.comment;
                 classBody += `\n  ${tuple.comment}`;
             }
             if (tuple.method) {
                 jsonSchema[tuple.method].contract = tuple.contract;
-                classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)} 
+                // tslint:disable-next-line:max-line-length
+                classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
     }
     `;
             }
         });
 
-
-        let fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
+        const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + '\n}');
-        let jsonPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.json`);
-
-        fs.writeFileSync(jsonPath, JSON.stringify(jsonSchema, null, 2));
+        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + '\n}' + '\n');
+        const jsonPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.json`);
+        fs.writeFileSync(jsonPath, JSON.stringify(jsonSchema, null, 2) + '\n');
     }
 
     ProxifyFromBinding(controllerPath: any, className: string, packageName?: string) {
-        //read controller file
-        let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
+        const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
         shell.mkdir('-p', this.target);
         console.log('> Generating binding contract:', className, packageName);
 
+        // tslint:disable-next-line:max-line-length
         let fileHead = `import { Proxy, MessageConfig, MessageHandler, MessageWorker, MessageWorkers, Files, Verbs, MethodType, Body, Response, Request, Param, Query, SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
 
         /*start custom*/
-        let startCustom = content.indexOf('/*start custom*/');
-        let endCustom = content.indexOf('/*end custom*/');
+        const startCustom = content.indexOf('/*start custom*/');
+        const endCustom = content.indexOf('/*end custom*/');
         if (startCustom > 0) {
             fileHead += content.substring(startCustom, endCustom);
             fileHead += '/*end custom*/\n';
@@ -186,7 +177,10 @@ export class Proxify {
 
         if (this.configuration.models) {
             const keys = Object.keys(this.configuration.models);
-            fileHead += `import { ${keys.map((elem: string) => { return (elem.endsWith('Model') ? elem : elem + 'Model') }).join(', ')} } from '../'; \n`;
+            // tslint:disable-next-line:max-line-length
+            fileHead += `import { ${keys.map((elem: string) => {
+                return (elem.endsWith('Model') ? elem : elem + 'Model');
+            }).join(', ')} } from '../'; \n`;
         }
 
         if (this.configuration.includes) {
@@ -194,34 +188,31 @@ export class Proxify {
                 const currentBindingInclude = this.configuration.includes[key];
                 if (currentBindingInclude.alias) {
                     fileHead += `import * as ${currentBindingInclude.alias} from '../';\n`;
-                }
-                else {
+                } else {
                     fileHead += `import { ${key} } from '../';\n`;
                 }
-            })
+            });
         }
 
-
-        if (packageName)
+        if (packageName) {
             fileHead = fileHead.replace(/\.\.\/\.\.\//g, packageName + '/');
+        }
 
-        let indexOfMethodConfig = content.indexOf('@MessageConfig(') || content.indexOf('@MessageConfigBase(');
-        let proxyDecorator = `@Proxy.ProxyClass('${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}') \n`
-        let classDefinition = proxyDecorator + content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig)) + ' {\n';
-        //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
+        const indexOfMethodConfig = content.indexOf('@MessageConfig(') || content.indexOf('@MessageConfigBase(');
+        // tslint:disable-next-line:max-line-length
+        const proxyDecorator = `@Proxy.ProxyClass('${packageName}', '${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
+        // tslint:disable-next-line:max-line-length
+        const classDefinition = proxyDecorator + content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig)) + ' {\n';
 
-        let notClean = true;
-        let methodResult = `return new MethodResult({} as any);`;
+        const methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
-
-
-
-
+        // tslint:disable-next-line:max-line-length
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;
         let m;
         const mocks_and_methods = {};
         let Tuple: any = {};
+        // tslint:disable-next-line:no-conditional-assignment
         while ((m = regex.exec(content)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
@@ -229,8 +220,9 @@ export class Proxify {
             }
             m.forEach((match, groupIndex) => {
 
-                if (!match)
+                if (!match) {
                     return;
+                }
 
                 if (match.indexOf('/*') === 0) {
                     Tuple.comment = match;
@@ -254,8 +246,7 @@ export class Proxify {
                 if (match.indexOf('public') === 0) {
                     if (Tuple.mock) {
                         Tuple.contract = match.replace(' async ', ' ');
-                    }
-                    else {
+                    } else {
                         Tuple.contract = match;
                     }
                     mocks_and_methods[Tuple.method] = Tuple;
@@ -264,22 +255,20 @@ export class Proxify {
             });
         }
 
-
         Object.values(mocks_and_methods).forEach((tuple: any) => {
             if (tuple.comment) {
                 classBody += `\n ${tuple.comment}`;
             }
 
             if (tuple.method) {
-                classBody += `\n ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)} 
+                // tslint:disable-next-line:max-line-length
+                classBody += `\n ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
     }
 `;
             }
         });
-        let fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
+        const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + ' \n}');
+        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + ' \n}' + '\n');
     }
-
-
 }

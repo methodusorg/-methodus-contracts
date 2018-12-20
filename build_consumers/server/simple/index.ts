@@ -4,7 +4,7 @@ import {
     ClientConfiguration, ConfiguredServer, MethodType, ServerType,
 } from '@methodus/server';
 
-global.methodus = { config: { 'Simple': { 'transport': 'Mock' } } };
+(global as any).methodus = { config: { Simple: { transport: 'Mock' } } };
 import { Simple } from '@server/simple';
 
 @ServerConfiguration(ServerType.Express, { port: process.env.PORT || 6690 })
@@ -15,8 +15,8 @@ class SetupServer extends ConfiguredServer {
     }
 }
 
-
 (async () => {
+    // tslint:disable-next-line:no-unused-expression
     new SetupServer();
     setTimeout(async () => {
         const result = await Simple.get('1111');

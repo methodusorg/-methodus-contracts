@@ -1,13 +1,10 @@
-const excludedProps = ['constructor'];
-const debug = require('debug')('contracts');
-const path = require('path');
-const fs = require('fs');
-var shell = require('shelljs');
-import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
-
+import * as path from 'path';
+import * as fs from 'fs';
+import * as shell from 'shelljs';
+import { HEADER, Configuration } from './interfaces';
 
 export class Clientify {
-    configuration: Configuration
+    configuration: Configuration;
     source: string;
     target: string;
     constructor(configuration: Configuration, source, target) {
@@ -22,47 +19,41 @@ export class Clientify {
 
     splice(str, start, delCount, newSubStr) {
         return str.slice(0, start) + newSubStr + str.slice(start + Math.abs(delCount));
-    };
+    }
 
     CopyFromFile(controllerPath: any, className: string, packageName?: string) {
 
-        let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
+        const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
         shell.mkdir('-p', this.target);
         console.log('> Copying file:', className, packageName);
-        let fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
+        const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'includes'));
-        fs.writeFileSync(fullPath, HEADER + content);
-
+        fs.writeFileSync(fullPath, HEADER + content + '\n');
 
     }
 
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
-        //read controller file
+        const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
 
-        let content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
-
-        // let newPackageName = packageName.replace('@tmla-tiles', '@tmla-contracts');
-        // destination = path.resolve(path.join('..', '..', newPackageName, destination))
         shell.mkdir('-p', this.target);
         console.log('> Generating client contract:', className, packageName);
-
-        //find the @MethodConfig
-
         let fileHead =
             `import * as M from '@methodus/client';
 import { MethodResult } from '@methodus/client';
 `;
 
         /*start custom*/
-        let startCustom = content.indexOf('/*start custom*/');
-        let endCustom = content.indexOf('/*end custom*/');
+        const startCustom = content.indexOf('/*start custom*/');
+        const endCustom = content.indexOf('/*end custom*/');
         if (startCustom > 0) {
             fileHead += content.substring(startCustom, endCustom);
         }
 
         if (this.configuration.models) {
             const keys = Object.keys(this.configuration.models);
-            fileHead += `import { ${keys.map((elem: string) => { return (elem.endsWith('Model') ? elem : elem + 'Model') }).join(',')} } from '../';\n`;
+            fileHead += `import { ${keys.map((elem: string) => {
+                return (elem.endsWith('Model') ? elem : elem + 'Model');
+            }).join(',')} } from '../';\n`;
         }
 
         if (this.configuration.includes) {
@@ -87,28 +78,25 @@ import { MethodResult } from '@methodus/client';
 
         let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
         if (classMarker.indexOf(',') > -1) {
-            let arr = classMarker.split(',');
+            const arr = classMarker.split(',');
             classMarker = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
         }
 
-
         let classDefinition = classMarker + ' {\n';
-        //classDefinition = splice(classDefinition, classDefinition.indexOf('export'), 0, proxyDecorator);
         classDefinition = classDefinition.replace(/\@MethodConfigBase/g, '@M.MethodConfigBase');
         classDefinition = classDefinition.replace(/\@MethodConfig/g, '@M.MethodConfig');
         classDefinition = classDefinition.replace(/, \[.*?\]/g, '');
         classDefinition += `\n public static base: string;`;
-        let notClean = true;
         let methodResult = `return new M.MethodResult({} as any);`;
 
         let classBody = '';
-
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;
         let m;
         const mocks_and_methods = {};
         let Tuple: any = {};
 
+        // tslint:disable-next-line:no-conditional-assignment
         while ((m = regex.exec(content)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
@@ -127,103 +115,69 @@ import { MethodResult } from '@methodus/client';
                 if (match.indexOf('@MethodMock') === 0) {
                     Tuple.mock = `${mockRegex.exec(match)[1]}`;
                 }
-                // const theargs = [];
-
-                // Tuple.result = `  
-                // const methodArgs = arguments;
-                // return new Promise<any>(function (resolve, reject) {
-                //     resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
-                // });`
 
                 if (match.indexOf('@Method(') === 0) {
-                    //find return type
                     Tuple.method = match;
                 }
                 if (match.indexOf('public') === 0) {
-                    //find return type
-                    Tuple.contract = match;///.replace(' async ', ' ');
+                    Tuple.contract = match;
                     mocks_and_methods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
             });
         }
 
-
-
         Object.values(mocks_and_methods).forEach((tuple: any) => {
             if (tuple.comment) {
                 classBody += `\n  ${tuple.comment}`;
             }
             if (tuple.mock) {
-
-                //split mapped args
                 const str = tuple.contract.split('@');
                 const args = str.map((param) => {
                     if (param.indexOf(':') === -1) {
-                        return
+                        return;
                     }
                     return param.split(')')[1].split(':')[0];
-
                 }).join(', ');
+                Tuple.result = `
 
-                Tuple.result = `  
-               
                 return new Promise<any>(function (resolve, reject) {
                     resolve(${tuple.mock}.apply(this, [${args}]));
-                });`
-
+                });`;
 
             }
             if (tuple.method) {
-                //try to resolve result value
-
-                //const resultRegex = /\<MethodResult<([^\)]+)\>\>/;
                 const resultRegex = /(\<.*\>)./;
-
-                const m = resultRegex.exec(tuple.contract);
-                if (!m) {
-                    throw (new Error('all methods should return a promise of MethodResult<> object'))
+                const mo = resultRegex.exec(tuple.contract);
+                if (!mo) {
+                    throw (new Error('all methods should return a promise of MethodResult<> object'));
                 }
-                if (m.length > 1) {
-                    let returnType = m[1];
+                if (mo.length > 1) {
+                    let returnType = mo[1];
                     if (returnType.startsWith('<')) {
                         returnType = returnType.substr(1, returnType.length - 2);
                     }
                     methodResult = `return new ${returnType}({});`;
-                    //tuple.contract = tuple.contract.replace(m[0], `<${returnType}>`);
                 }
-                classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)} 
+                // tslint:disable-next-line:max-line-length
+                classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
         }
         `;
             }
         });
 
-        // while (notClean) {
-        //     let methodHead = `    ` + content.substring(loc, content.indexOf('{', loc + 1) + 1);
-
-        //     classBody += methodHead + methodResult;
-        //     loc = content.indexOf('@Method(', loc + 1);
-        //     if (loc === -1)
-        //         notClean = false;
-        // }
-
-        const replaceList = ['Method', 'Param', 'Proxy', 'MethodConfig', 'MethodConfigBase', 'Body', 'Query', 'Response', 'Request', 'Files', 'Cookies', 'Headers', 'MethodResult', 'MethodError'];
+        const replaceList = ['Method', 'Param', 'Proxy', 'MethodConfig',
+            'MethodConfigBase', 'Body', 'Query', 'Response', 'Request', 'Files',
+            'Cookies', 'Headers', 'MethodResult', 'MethodError'];
         classBody = classBody.replace(/\Verbs./g, 'M.Verbs.');
-
         classBody = classBody.replace(/, \[.*?\]/g, '');
         classBody = classBody.replace(/, @SecurityContext\(\) securityContext: any/g, '');
-
         replaceList.forEach((value: string) => {
             classBody = classBody.replace(new RegExp('@' + value, 'g'), '@M.' + value);
         });
 
-
-
-        let fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
+        const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + ' \n    }');
+        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + ' \n    }' + '\n');
     }
-
-
-
 }

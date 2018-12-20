@@ -3,47 +3,47 @@ import { Modelify } from './modelify';
 import { UseTemplate, Exportify, ModelsIndex, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
 import { Clientify } from './clientify';
-import { HEADER, Configuration, KeysConfiguration, ModelConfiguration } from './interfaces';
+import { Configuration } from './interfaces';
 import * as path from 'path';
-import * as colors from 'colors';
 import * as fs from 'fs';
 
-
-
-
-
+const PKGJSON = 'package.json';
 export class Client {
     modelify: Modelify;
-
     Installer: Installer;
     clientify: Clientify;
     constructor(configuration: Configuration, packageName: string, source: string, target: string) {
-        //this.modelify = new Modelify(configuration, source, target);
 
         this.Installer = new Installer();
         this.clientify = new Clientify(configuration, source, target);
         this.modelify = new Modelify(configuration, source, target, true);
-        for (let modelKey in configuration.models) {
-            const model = configuration.models[modelKey];
-            this.modelify.ProxifyFromModel(model.path, modelKey, packageName);
+
+        if (configuration.models) {
+            Object.keys(configuration.models).forEach((modelKey) => {
+                const model = configuration.models[modelKey];
+                this.modelify.ProxifyFromModel(model.path, modelKey, packageName);
+            });
         }
 
-
-        for (let contractKey in configuration.contracts) {
-            const contract = configuration.contracts[contractKey];
-            this.clientify.ProxifyFromFile(contract.path, contractKey, packageName)
+        if (configuration.contracts) {
+            Object.keys(configuration.contracts).forEach((contractKey) => {
+                const contract = configuration.contracts[contractKey];
+                this.clientify.ProxifyFromFile(contract.path, contractKey, packageName);
+            });
         }
-
-        for (let contractKey in configuration.includes) {
-            const contract = configuration.includes[contractKey];
-            this.clientify.CopyFromFile(contract.path, contractKey, packageName);
+        if (configuration.includes) {
+            Object.keys(configuration.includes).forEach((contractKey) => {
+                const contract = configuration.includes[contractKey];
+                this.clientify.CopyFromFile(contract.path, contractKey, packageName);
+            });
         }
-
         Exportify(configuration, target, packageName, true);
 
-        let originalPackage = require(path.join(source, 'package.json'));
-        UseTemplate('_package.client.json', 'package.json', target, { name: configuration.contractNameClient, version: originalPackage.version })
-        UseTemplate('_tsconfig.client.json', 'tsconfig.json', target, { name: configuration.contractNameClient, version: originalPackage.version })
+        const originalPackage = require(path.join(source, PKGJSON));
+        UseTemplate('_package.client.json', PKGJSON, target,
+            { name: configuration.contractNameClient, version: originalPackage.version });
+        UseTemplate('_tsconfig.client.json', 'tsconfig.json', target,
+            { name: configuration.contractNameClient, version: originalPackage.version });
         UseTemplate('_.gitignore', '.gitignore', target);
         UseTemplate('_.npmignore', '.npmignore', target);
         if (configuration.npmrc) {
@@ -52,32 +52,21 @@ export class Client {
             UseTemplate('_.npmrc', '.npmrc', target);
         }
 
-
-        //add, dependencies: configuration.dependencies
-        //load package.json
         if (configuration.dependencies) {
-            const packageData = require(path.join(target, 'package.json'));
+            const packageData = require(path.join(target, PKGJSON));
             packageData.dependencies = configuration.dependencies;
-            Object.keys(packageData.dependencies).forEach((key) => {
-                packageData.dependencies[key.replace('@tmla-contracts/', '@tmla-client/')] = packageData.dependencies[key];
-                delete packageData.dependencies[key];
-            })
-            fs.writeFileSync(path.join(path.join(target, 'package.json')), JSON.stringify(packageData, null, 2));
-
+            fs.writeFileSync(path.join(path.join(target, PKGJSON)), JSON.stringify(packageData, null, 2) + '\n');
         }
-
-
         ModelsIndex(configuration, source, path.join(target, 'models'), packageName);
-
     }
-    public link(dest) {
+    public link(dest: string) {
         this.Installer.link(dest);
     }
 
-    public publish(dest) {
+    public publish(dest: string) {
         this.Installer.publish(dest);
     }
-    public install(dest) {
+    public install(dest: string) {
         this.Installer.build(dest);
     }
 }
