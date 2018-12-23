@@ -107,6 +107,8 @@ export class Modelify {
                 return 'Array<any>';
             case 'Date':
                 return typeName;
+            case 'String':
+                return 'string';
             case 'Object':
                 return 'any';
         }
@@ -114,6 +116,6 @@ export class Modelify {
         if (importTypes.indexOf(typeName + 'Model') > -1) {
             return typeName + 'Model';
         }
-        return typeName.toLowerCase();
+        return typeName;
     }
 }

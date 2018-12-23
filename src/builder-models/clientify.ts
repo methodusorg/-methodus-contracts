@@ -150,14 +150,23 @@ import { MethodResult } from '@methodus/client';
                 const resultRegex = /(\<.*\>)./;
                 const mo = resultRegex.exec(tuple.contract);
                 if (!mo) {
-                    throw (new Error('all methods should return a promise of MethodResult<> object'));
+                    throw (new Error('all methods should return a promise of MethodResult object'));
                 }
                 if (mo.length > 1) {
                     let returnType = mo[1];
                     if (returnType.startsWith('<')) {
                         returnType = returnType.substr(1, returnType.length - 2);
                     }
-                    methodResult = `return new ${returnType}({});`;
+                    let finalType = returnType;
+                    const innerTypeRegex = /\<(.*)\>/;
+                    const mox = innerTypeRegex.exec(returnType);
+                    if (mox && mox.length > 1) {
+                        finalType = mox[1];
+                    } else {
+                        finalType = 'any';
+                    }
+                    methodResult = `return {} as ${finalType};`;
+                    tuple.contract = tuple.contract.replace(returnType, finalType);
                 }
                 // tslint:disable-next-line:max-line-length
                 classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
