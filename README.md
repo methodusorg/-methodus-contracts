@@ -7,11 +7,16 @@
 
 
 @Methodus contracts builder.
+## Install
+Install globally using `npm i -g @methodus/contracts`
 
 ### usage:
+In the root folder of the package execute:
 
 Client contracts
-`node node_modules/@methodus/contracts/client.js ./build_vars/simple/build.json`
+`contracts-client build.json`
 
 Server contracts
-`node node_modules/@methodus/contracts/build.js ./build_vars/simple/build.json`
+`contracts-server build.json`
+
+
