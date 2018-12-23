@@ -1,14 +1,18 @@
 {
     "name": "@methodus/contracts",
-    "version": "1.0.4",
+    "version": "1.0.6",
     "description": "",
     "main": "index.js",
+    "bin": {
+        "contracts-server": "build.js",
+        "contracts-client": "client.js"
+    },
     "scripts": {
         "tslint": "tslint --project",
         "check-coverage": "nyc --reporter=lcov --reporter=html npm run xtest && nyc report",
         "pretest": "tsc",
         "test": "npm run check-coverage",
-        "prepublishOnly": "npm version patch",
+        "prepublishOnly1": "npm version patch",
         "xtest": "set test='true'&alsatian tests/*.spec.js ",
         "test:server": "npm run test:server:simple & npm run test:server:models & npm run test:server:inherit ",
         "test:server:simple": "node build.js ./build_vars/simple/build.json",
