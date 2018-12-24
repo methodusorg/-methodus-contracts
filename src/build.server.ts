@@ -20,7 +20,7 @@ export async function ServerBuilder(contract?: string) {
         // tslint:disable-next-line:no-console
         console.log(colors.green('> loading build configuration from:'), filePath);
         buildConfiguration = require(filePath) as KeysConfiguration;
-        // singleTarget = process.argv[3];
+
         publish = process.argv[3] === '-p' || publish;
     }
 

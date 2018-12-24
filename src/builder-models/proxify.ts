@@ -30,7 +30,7 @@ export class Proxify {
         console.log('> Copying file:', className, packageName);
         const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'includes'));
-        fs.writeFileSync(fullPath, HEADER + content + '\n');
+        fs.writeFileSync(fullPath, `${HEADER}${content}\n`);
     }
 
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
@@ -40,7 +40,9 @@ export class Proxify {
         console.log('> Generating contract:', className, packageName);
 
         // tslint:disable-next-line:max-line-length
-        let fileHead = `import { Proxy, Method, MethodPipe, MethodConfig, MethodConfigBase,MethodConfigExtend, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies, Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
+        let fileHead = `import { Proxy, Method, MethodPipe, MethodConfig, MethodConfigBase,
+MethodConfigExtend, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies,
+Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
 
         /*start custom*/
         const startCustom = content.indexOf('/*start custom*/');
@@ -92,7 +94,7 @@ export class Proxify {
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;
         let m;
-        const mocks_and_methods = {};
+        const mocksAndMethods = {};
         const jsonSchema = {};
 
         let Tuple: any = {};
@@ -131,13 +133,13 @@ export class Proxify {
                     } else {
                         Tuple.contract = match;
                     }
-                    mocks_and_methods[Tuple.method] = Tuple;
+                    mocksAndMethods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
             });
         }
 
-        Object.values(mocks_and_methods).forEach((tuple: any) => {
+        Object.values(mocksAndMethods).forEach((tuple: any) => {
             jsonSchema[tuple.method] = jsonSchema[tuple.method] || {};
             if (tuple.comment) {
                 jsonSchema[tuple.method].comment = tuple.comment;
@@ -154,7 +156,7 @@ export class Proxify {
 
         const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + '\n}' + '\n');
+        fs.writeFileSync(fullPath, `${HEADER}${fileHead}${classDefinition}${classBody} \n    }\n`);
         const jsonPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.json`);
         fs.writeFileSync(jsonPath, JSON.stringify(jsonSchema, null, 2) + '\n');
     }
@@ -165,7 +167,9 @@ export class Proxify {
         console.log('> Generating binding contract:', className, packageName);
 
         // tslint:disable-next-line:max-line-length
-        let fileHead = `import { Proxy, MessageConfig, MessageHandler, MessageWorker, MessageWorkers, Files, Verbs, MethodType, Body, Response, Request, Param, Query, SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
+        let fileHead = `import { Proxy, MessageConfig, MessageHandler, MessageWorker, MessageWorkers,
+Files, Verbs, MethodType, Body, Response, Request, Param, Query,
+SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
 
         /*start custom*/
         const startCustom = content.indexOf('/*start custom*/');
@@ -202,7 +206,7 @@ export class Proxify {
         // tslint:disable-next-line:max-line-length
         const proxyDecorator = `@Proxy.ProxyClass('${packageName}', '${className}', '${controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
         // tslint:disable-next-line:max-line-length
-        const classDefinition = proxyDecorator + content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig)) + ' {\n';
+        const classDefinition = `${proxyDecorator}${content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig))}{\n`;
 
         const methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
@@ -210,7 +214,7 @@ export class Proxify {
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;
         let m;
-        const mocks_and_methods = {};
+        const mocksAndMethods = {};
         let Tuple: any = {};
         // tslint:disable-next-line:no-conditional-assignment
         while ((m = regex.exec(content)) !== null) {
@@ -249,13 +253,13 @@ export class Proxify {
                     } else {
                         Tuple.contract = match;
                     }
-                    mocks_and_methods[Tuple.method] = Tuple;
+                    mocksAndMethods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
             });
         }
 
-        Object.values(mocks_and_methods).forEach((tuple: any) => {
+        Object.values(mocksAndMethods).forEach((tuple: any) => {
             if (tuple.comment) {
                 classBody += `\n ${tuple.comment}`;
             }
@@ -269,6 +273,7 @@ export class Proxify {
         });
         const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + ' \n}' + '\n');
+        fs.writeFileSync(fullPath, `${HEADER}${fileHead}${classDefinition}${classBody} \n    }\n`);
+
     }
 }

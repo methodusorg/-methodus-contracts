@@ -28,7 +28,7 @@ export class Clientify {
         console.log('> Copying file:', className, packageName);
         const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'includes'));
-        fs.writeFileSync(fullPath, HEADER + content + '\n');
+        fs.writeFileSync(fullPath, `${HEADER}${content}\n`);
 
     }
 
@@ -93,7 +93,7 @@ import { MethodResult } from '@methodus/client';
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;
         let m;
-        const mocks_and_methods = {};
+        const mocksAndMethods = {};
         let Tuple: any = {};
 
         // tslint:disable-next-line:no-conditional-assignment
@@ -121,13 +121,13 @@ import { MethodResult } from '@methodus/client';
                 }
                 if (match.indexOf('public') === 0) {
                     Tuple.contract = match;
-                    mocks_and_methods[Tuple.method] = Tuple;
+                    mocksAndMethods[Tuple.method] = Tuple;
                     Tuple = {};
                 }
             });
         }
 
-        Object.values(mocks_and_methods).forEach((tuple: any) => {
+        Object.values(mocksAndMethods).forEach((tuple: any) => {
             if (tuple.comment) {
                 classBody += `\n  ${tuple.comment}`;
             }
@@ -187,6 +187,6 @@ import { MethodResult } from '@methodus/client';
 
         const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, HEADER + fileHead + classDefinition + classBody + ' \n    }' + '\n');
+        fs.writeFileSync(fullPath, `${HEADER}${fileHead}${classDefinition}${classBody} \n    }\n`);
     }
 }

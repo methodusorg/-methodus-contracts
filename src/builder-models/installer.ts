@@ -1,4 +1,5 @@
 import * as shelljs from 'shelljs';
+const LINE = '----------------------------------------------------------------------';
 export class Installer {
     shell: any;
     constructor() {
@@ -10,22 +11,21 @@ export class Installer {
         this.shell.cd(destFolder);
         try {
             const intsallResult = this.shell.exec('yarn').code;
-            console.log('----------------------------------------------------------------------');
+            console.log(LINE);
             console.log('installing deps: ' + (intsallResult === 0));
             if (intsallResult !== 0) {
                 throw (new Error('yarn error'));
             }
             const compileResult = this.shell.exec('tsc').code;
             console.log('compiling generated code: ' + (compileResult === 0));
-            console.log('----------------------------------------------------------------------');
+            console.log(LINE);
 
             if (compileResult !== 0) {
-
                 throw (new Error('tsc error'));
             }
 
             const prodInstallResult = this.shell.exec('yarn --production').code;
-            console.log('----------------------------------------------------------------------');
+            console.log(LINE);
             console.log('installing production deps: ' + (prodInstallResult === 0));
             if (prodInstallResult !== 0) {
                 throw (new Error('yarn error'));

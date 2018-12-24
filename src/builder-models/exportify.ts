@@ -85,7 +85,7 @@ export function Exportify(buildConfiguration: Configuration,
             }`;
     }
     shell.mkdir('-p', target);
-    fs.writeFileSync(path.join(target, 'index.ts'), HEADER + head + body + '\n');
+    fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
 }
 
 export function ModelsIndex(buildConfiguration: Configuration, source: string, target: string, packageName: string) {
@@ -105,7 +105,7 @@ export function ModelsIndex(buildConfiguration: Configuration, source: string, t
     }
 
     shell.mkdir('-p', target);
-    fs.writeFileSync(path.join(target, 'index.ts'), HEADER + head + body + '\n');
+    fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
 }
 
 export function UseTemplate(fileName, targetFileName, destFolder, replacement?) {

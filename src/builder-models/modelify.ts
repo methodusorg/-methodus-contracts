@@ -62,7 +62,7 @@ export class Modelify {
 
             shelljs.mkdir('-p', path.join(this.target, 'models'));
             fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.ts`),
-                HEADER + importRow + customeSection + modelBody + '\n');
+                `${HEADER}${importRow}${customeSection}${modelBody}\n`);
         } catch (ex) {
             console.error(ex);
         }
@@ -87,14 +87,12 @@ export class Modelify {
 
         Object.keys(odm.fields).forEach((type) => {
             let modelName = odm.fields[type].type;
-            if (modelName) {
-                if (this.allModels.indexOf(modelName) > -1) { // the type is one of the Models in  the package
-                    if (!modelName.endsWith('Model')) {// fix the Model suffix -- temporay solution
-                        modelName = modelName + 'Model';
-                    }
-                    if (importTypes.indexOf(modelName) === -1) { // don't insert it twice
-                        importTypes.push(modelName); // added to import list
-                    }
+            if (modelName && this.allModels.indexOf(modelName) > -1) { // the type is one of the Models in  the package
+                if (!modelName.endsWith('Model')) {// fix the Model suffix -- temporay solution
+                    modelName = modelName + 'Model';
+                }
+                if (importTypes.indexOf(modelName) === -1) { // don't insert it twice
+                    importTypes.push(modelName); // added to import list
                 }
             }
         });

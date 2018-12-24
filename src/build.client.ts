@@ -17,7 +17,7 @@ export async function ClientBuilder(contract?: string) {
         const filePath = path.resolve(path.join(process.cwd(), process.argv[2]));
         console.log(colors.green('> loading build configuration from:'), filePath);
         buildConfiguration = require(filePath) as KeysConfiguration;
-        // singleTarget = process.argv[3];
+
         publish = process.argv[3] === '-p' || publish;
     }
 
