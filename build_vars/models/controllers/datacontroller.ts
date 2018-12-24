@@ -5,6 +5,9 @@ import { Query as DataQuery } from '@methodus/data';
 @MethodConfig('Data')
 export class DataController {
 
+    /*
+    this comment should stay all the way up to the contract
+    */
     @Method(Verbs.Get, '/id/:id')
     public static async get(@Param('id') id: string): Promise<MethodResult> {
         const repo = (this as any).methodus.repository;

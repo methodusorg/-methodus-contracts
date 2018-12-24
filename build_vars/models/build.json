@@ -7,6 +7,9 @@
         "models": {
             "UserModel": {
                 "path": "./models/user.model.ts"
+            },
+            "GroupModel": {
+                "path": "./models/group.ts"
             }
         },
         "npmrc": "./.npmrc",
@@ -20,7 +23,13 @@
         },
         "includes": {
             "Mock": {
+                "alias": "mocker",
                 "path": "../../build_mocks/mock.ts"
+            }
+        },
+        "bindings": {
+            "Bind": {
+                "path": "./controllers/bind.controller.ts"
             }
         },
         "dependencies": {}
