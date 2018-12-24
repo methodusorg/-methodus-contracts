@@ -13,3 +13,7 @@ build_path
 build_vars
 build_mocks
 build_consumers
+.nyc_output
+.scannerwork
+coverage
+sonar-project.properties
