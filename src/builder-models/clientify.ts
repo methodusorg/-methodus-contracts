@@ -77,10 +77,14 @@ import { MethodResult } from '@methodus/client';
         }
 
         let classMarker = content.substring(indexOfMethodConfig, content.indexOf('{', indexOfMethodConfig));
-        if (classMarker.indexOf(',') > -1) {
-            const arr = classMarker.split(',');
-            classMarker = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
+
+        const classRows = classMarker.split('\n');
+
+        if (classRows[0].indexOf(',') > -1) {
+            const arr = classRows[0].split(',');
+            classRows[0] = arr[0] + arr[arr.length - 1].substr(arr[arr.length - 1].indexOf(')'));
         }
+        classMarker = classRows.join('\n');
 
         let classDefinition = classMarker + ' {\n';
         classDefinition = classDefinition.replace(/\@MethodConfigBase/g, '@M.MethodConfigBase');
