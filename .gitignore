@@ -12,3 +12,4 @@ build_path/
 .nyc_output/
 .scannerwork/
 coverage/
+.npmrc

@@ -34,6 +34,6 @@ export interface Configuration {
 }
 
 export const HEADER = `
-// TMLA methodus contract.
+// Methodus contract.
 // Generated at: ${new Date()}
 `;

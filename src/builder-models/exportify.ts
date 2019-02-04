@@ -14,10 +14,12 @@ export function Exportify(buildConfiguration: Configuration,
     if (buildConfiguration.includes) {
         Object.keys(buildConfiguration.includes).forEach((modelKey: string) => {
             const currentBindingInclude = buildConfiguration.includes[modelKey];
-            if (!currentBindingInclude.alias) {
-                body += `export { ${modelKey}  } from './includes/${modelKey.toLocaleLowerCase()}';\n`;
-            } else {
-                body += `export * from './includes/${modelKey.toLocaleLowerCase()}';\n`;
+            if (currentBindingInclude.path.indexOf('.ts') > -1) {
+                if (!currentBindingInclude.alias) {
+                    body += `export { ${modelKey}  } from './includes/${modelKey.toLocaleLowerCase()}';\n`;
+                } else {
+                    body += `export * from './includes/${modelKey.toLocaleLowerCase()}';\n`;
+                }
             }
         });
     }

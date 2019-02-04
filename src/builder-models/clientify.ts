@@ -26,7 +26,12 @@ export class Clientify {
         const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
         shell.mkdir('-p', this.target);
         console.log('> Copying file:', className, packageName);
-        const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
+
+        // get the extension
+        const arr = controllerPath.split('.');
+        const ext = arr[arr.length - 1];
+
+        const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.${ext}`);
         shell.mkdir('-p', path.join(this.target, 'includes'));
         fs.writeFileSync(fullPath, `${HEADER}${content}\n`);
 
@@ -59,10 +64,12 @@ import { MethodResult } from '@methodus/client';
         if (this.configuration.includes) {
             Object.keys(this.configuration.includes).forEach((modelKey: string) => {
                 const currentBindingInclude = this.configuration.includes[modelKey];
-                if (!currentBindingInclude.alias) {
-                    fileHead += `import { ${modelKey} } from '../';\n`;
-                } else {
-                    fileHead += `import * as ${currentBindingInclude.alias} from '../';\n`;
+                if (currentBindingInclude.path.indexOf('.ts') > -1) {
+                    if (!currentBindingInclude.alias) {
+                        fileHead += `import { ${modelKey} } from '../';\n`;
+                    } else {
+                        fileHead += `import * as ${currentBindingInclude.alias} from '../';\n`;
+                    }
                 }
             });
         }
@@ -143,7 +150,7 @@ import { MethodResult } from '@methodus/client';
                     }
                     return param.split(')')[1].split(':')[0];
                 }).join(', ');
-                Tuple.result = `
+                tuple.result = `
 
                 return new Promise<any>(function (resolve, reject) {
                     resolve(${tuple.mock}.apply(this, [${args}]));
