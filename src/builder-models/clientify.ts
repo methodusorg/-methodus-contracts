@@ -143,7 +143,7 @@ import { MethodResult } from '@methodus/client';
                     }
                     return param.split(')')[1].split(':')[0];
                 }).join(', ');
-                Tuple.result = `
+                tuple.result = `
 
                 return new Promise<any>(function (resolve, reject) {
                     resolve(${tuple.mock}.apply(this, [${args}]));
