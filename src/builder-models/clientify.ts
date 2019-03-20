@@ -144,17 +144,27 @@ import { MethodResult } from '@methodus/client';
             }
             if (tuple.mock) {
                 const str = tuple.contract.split('@');
-                const args = str.map((param) => {
+                let argsLine = str.map((param) => {
                     if (param.indexOf(':') === -1) {
                         return;
                     }
-                    return param.split(')')[1].split(':')[0];
-                }).join(', ');
-                tuple.result = `
+                    const pair = param.split(')')[1].split(':');
+                    return pair[0].trim();
 
-                return new Promise<any>(function (resolve, reject) {
-                    resolve(${tuple.mock}.apply(this, [${args}]));
-                });`;
+                }).join(', ');
+
+                argsLine = argsLine.trim();
+                if (argsLine.indexOf(',') === 0) {
+                    argsLine = argsLine.substring(1).trim();
+                }
+                if (argsLine.indexOf(', securityContext') > -1) {
+                    argsLine = argsLine.replace(', securityContext', '').trim();
+                }
+
+                tuple.result = `
+        return new Promise<any>(function (resolve, reject) {
+            resolve(${tuple.mock}.apply(this,[${argsLine}], [${argsLine}]));
+        });`;
 
             }
             if (tuple.method) {
@@ -179,6 +189,7 @@ import { MethodResult } from '@methodus/client';
                     methodResult = `return {} as ${finalType};`;
                     tuple.contract = tuple.contract.replace(returnType, finalType);
                 }
+
                 // tslint:disable-next-line:max-line-length
                 classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
         }
