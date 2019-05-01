@@ -11,7 +11,7 @@ export class Modelify {
     source: string;
     target: string;
     isClient = false;
-    constructor(configuration: Configuration, source: string, target: string, isClient?: boolean) {
+    constructor(configuration: Configuration, source: string, target: string, isClient = false) {
         this.source = source;
         this.target = target;
         this.isClient = isClient;
@@ -22,11 +22,16 @@ export class Modelify {
     }
 
     ProxifyFromModel(modelSource: any, className: string, packageName: string) {
+
         shelljs.mkdir('-p', this.target);
         console.log('Generating Model for:', className);
         let modelBody = '';
         try {
-            const content = fs.readFileSync(path.join(this.source, modelSource), 'utf-8');
+            let basicSourcePath = path.join(this.source, modelSource);
+            if (this.buildConfiguration.srcFolder) {
+                basicSourcePath = path.join(this.source, this.buildConfiguration.srcFolder, modelSource);
+            }
+            const content = fs.readFileSync(basicSourcePath, 'utf-8');
             let customeSection = '';
             /*start custom*/
             const openPhrase = '/*start custom*/', closePhrase = '/*end custom*/';
@@ -38,7 +43,14 @@ export class Modelify {
             }
 
             const modelSchema = new ModelSchema(className);
-            const modelRequire = require(path.join(this.source, modelSource).replace('.ts', ''));
+            let basicPath = path.join(this.source, modelSource);
+            if (this.buildConfiguration.buildFolder) {
+                basicPath = path.join(this.source, this.buildConfiguration.buildFolder, modelSource);
+            } else if (this.buildConfiguration.srcFolder) {
+                basicPath = path.join(this.source, this.buildConfiguration.srcFolder, modelSource);
+            }
+
+            const modelRequire = require(basicPath.replace('.ts', ''));
             let importRow = '';
             let importTypes = [];
             Object.keys(modelRequire).forEach((modelClassKey) => {

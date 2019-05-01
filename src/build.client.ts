@@ -7,7 +7,7 @@ import * as del from 'del';
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
 export async function ClientBuilder(contract?: string) {
-    let buildConfiguration = null;
+    let buildConfiguration: Configuration |KeysConfiguration;
 
     console.log(colors.blue('> methodus client contract builder.'));
     let publish = false;
@@ -21,7 +21,7 @@ export async function ClientBuilder(contract?: string) {
         publish = process.argv[3] === '-p' || publish;
     }
 
-    const checkList = [];
+    const checkList: string[] = [];
     Object.keys(buildConfiguration).forEach(async (singleConfiguration) => {
         const configurationItem = buildConfiguration[singleConfiguration];
         console.log(colors.green(`> ${singleConfiguration}`));

@@ -21,6 +21,8 @@ export interface BindindConfiguration {
 
 export interface Configuration {
     buildPath: string;
+    buildFolder: string;
+    srcFolder: string;
     packageName: string;
     contractNameServer: string;
     contractNameClient: string;
