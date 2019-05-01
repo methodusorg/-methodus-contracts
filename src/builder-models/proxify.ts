@@ -2,8 +2,10 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shell from 'shelljs';
+import * as micromatch from 'micromatch';
 
 import { HEADER, Configuration } from './interfaces';
+import { Helper } from '../helper';
 
 export class Proxify {
     configuration: Configuration;
@@ -25,12 +27,7 @@ export class Proxify {
     }
 
     CopyFromFile(controllerPath: any, className: string, packageName?: string) {
-        const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
-        shell.mkdir('-p', this.target);
-        console.log('> Copying file:', className, packageName);
-        const fullPath = path.join(this.target, 'includes', `${className.toLocaleLowerCase()}.ts`);
-        shell.mkdir('-p', path.join(this.target, 'includes'));
-        fs.writeFileSync(fullPath, `${HEADER}${content}\n`);
+        Helper.CopyFromFile.bind(this)(controllerPath, className, packageName);
     }
 
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
@@ -89,32 +86,42 @@ Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n
         const classDefinition = `${proxyDecorator}${classMarker} {\n`;
         const methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
+        const methodEntryArray = ['*@MethodMock*', '*@Method*', '*@MethodPipe*'];
 
         // tslint:disable-next-line:max-line-length
-        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
-        const mockRegex = /@MethodMock\((.*)\)/;
+        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.)*? {/g;
+
+        const mockRegex = /@MethodMock\((.*)\)/gmi;
         let m;
         const mocksAndMethods = {};
         const jsonSchema = {};
 
         let Tuple: any = {};
+
         // tslint:disable-next-line:no-conditional-assignment
         while ((m = regex.exec(content)) !== null) {
+            if (!m) { break; }
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
             m.forEach((match, groupIndex) => {
-                if (!match) {
+                if (!match || match.length < 3) {
                     return;
                 }
+
                 if (match.indexOf('@MethodMock') === 0) {
                     Tuple.mock = true;
-                    Tuple.result = `
+                    const ematch = mockRegex.exec(match);
+                    if (ematch && ematch.length > 0) {
+                        const resolveKey = ematch[1];
+
+                        Tuple.result = `
                         const methodArgs = arguments;
                         return new Promise<any>(function (resolve, reject) {
-                            resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
+                            resolve(${resolveKey}.apply(this, methodArgs));
                         });`;
+                    }
                 }
 
                 if (match.indexOf('/*') === 0) {
@@ -123,6 +130,7 @@ Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n
 
                 if (match.indexOf('@Method(') === 0) {
                     Tuple.method = match;
+                    mocksAndMethods[Tuple.method] = Tuple;
                 }
                 if (match.indexOf('@MethodPipe(') === 0) {
                     Tuple.method = match;
@@ -217,12 +225,14 @@ SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
         const mocksAndMethods = {};
         let Tuple: any = {};
         // tslint:disable-next-line:no-conditional-assignment
-        while ((m = regex.exec(content)) !== null) {
+        while ((regex.exec(content)) !== null) {
+            m = regex.exec(content);
+            if (!m) { break; }
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
-            m.forEach((match, groupIndex) => {
+            m.forEach((match: any, groupIndex: number) => {
 
                 if (!match) {
                     return;
@@ -234,11 +244,21 @@ SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
 
                 if (match.indexOf('@MethodMock') === 0) {
                     Tuple.mock = true;
-                    Tuple.result = `
-                    const methodArgs = arguments;
-                    return new Promise<any>(function (resolve, reject) {
-                        resolve(${mockRegex.exec(match)[1]}.apply(this, methodArgs));
-                    });`;
+                    if (match) {
+                        const ematch = mockRegex.exec(match);
+                        if (ematch && ematch.length > 0) {
+                            const resolveKey = ematch[1];
+                            if (resolveKey) {
+                                Tuple.result = `
+                                const methodArgs = arguments;
+                                return new Promise<any>(function (resolve, reject) {
+                                    resolve(${resolveKey}.apply(this, methodArgs));
+                                });`;
+                            }
+                        }
+
+                    }
+
                 }
 
                 if (match.indexOf('@MessageWorker(') === 0 ||

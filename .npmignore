@@ -17,3 +17,6 @@ build_consumers
 .scannerwork
 coverage
 sonar-project.properties
+build/tests
+build/build_vars
+build/build_mocks
