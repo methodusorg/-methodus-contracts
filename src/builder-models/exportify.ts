@@ -5,12 +5,7 @@ import * as shell from 'shelljs';
 import * as colors from 'colors';
 import { HEADER, Configuration } from './interfaces';
 
-export function Exportify(buildConfiguration: Configuration,
-    target: string, packageName: string, isClient = false) {
-
-    const head = `/**/\n`;
-    let body = '';
-
+function handleIncludes(buildConfiguration, body) {
     if (buildConfiguration.includes) {
         Object.keys(buildConfiguration.includes).forEach((modelKey: string) => {
             const currentBindingInclude = buildConfiguration.includes[modelKey];
@@ -23,7 +18,10 @@ export function Exportify(buildConfiguration: Configuration,
             }
         });
     }
+    return body;
+}
 
+function handleModels(buildConfiguration, body) {
     if (buildConfiguration.models) {
         Object.keys(buildConfiguration.models).forEach((modelKey: string) => {
             const fixedModelName = (modelKey.endsWith('Model')) ? modelKey : modelKey + 'Model';
@@ -31,6 +29,16 @@ export function Exportify(buildConfiguration: Configuration,
             body += `export { ${modelKey} as ${fixedModelName} } from './models/${modelKey.toLocaleLowerCase()}';\n`;
         });
     }
+    return body;
+
+}
+export function Exportify(buildConfiguration: Configuration,
+    target: string, packageName: string, isClient = false) {
+
+    const head = `/**/\n`;
+    let body = '';
+    body = handleIncludes(buildConfiguration, body);
+    body = handleModels(buildConfiguration, body);
 
     if (buildConfiguration.contracts) {
         const contracts = Object.assign({}, buildConfiguration.contracts);

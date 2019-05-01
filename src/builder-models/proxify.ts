@@ -2,8 +2,6 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shell from 'shelljs';
-import * as micromatch from 'micromatch';
-
 import { HEADER, Configuration } from './interfaces';
 import { Helper } from '../helper';
 
@@ -15,15 +13,6 @@ export class Proxify {
         this.source = source;
         this.target = target;
         this.configuration = configuration;
-    }
-    capitalize(str) {
-        str = str.toLowerCase();
-
-        return str[0].toUpperCase() + str.substr(1);
-    }
-
-    splice(str, start, delCount, newSubStr) {
-        return str.slice(0, start) + newSubStr + str.slice(start + Math.abs(delCount));
     }
 
     CopyFromFile(controllerPath: any, className: string, packageName?: string) {
@@ -86,66 +75,9 @@ Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n
         const classDefinition = `${proxyDecorator}${classMarker} {\n`;
         const methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
-        const methodEntryArray = ['*@MethodMock*', '*@Method*', '*@MethodPipe*'];
 
-        // tslint:disable-next-line:max-line-length
-        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.)*? {/g;
-
-        const mockRegex = /@MethodMock\((.*)\)/gmi;
-        let m;
-        const mocksAndMethods = {};
+        const mocksAndMethods = this.parseSignatures(content);
         const jsonSchema = {};
-
-        let Tuple: any = {};
-
-        // tslint:disable-next-line:no-conditional-assignment
-        while ((m = regex.exec(content)) !== null) {
-            if (!m) { break; }
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex) {
-                regex.lastIndex++;
-            }
-            m.forEach((match, groupIndex) => {
-                if (!match || match.length < 3) {
-                    return;
-                }
-
-                if (match.indexOf('@MethodMock') === 0) {
-                    Tuple.mock = true;
-                    const ematch = mockRegex.exec(match);
-                    if (ematch && ematch.length > 0) {
-                        const resolveKey = ematch[1];
-
-                        Tuple.result = `
-                        const methodArgs = arguments;
-                        return new Promise<any>(function (resolve, reject) {
-                            resolve(${resolveKey}.apply(this, methodArgs));
-                        });`;
-                    }
-                }
-
-                if (match.indexOf('/*') === 0) {
-                    Tuple.comment = match;
-                }
-
-                if (match.indexOf('@Method(') === 0) {
-                    Tuple.method = match;
-                    mocksAndMethods[Tuple.method] = Tuple;
-                }
-                if (match.indexOf('@MethodPipe(') === 0) {
-                    Tuple.method = match;
-                }
-                if (match.indexOf('public') === 0) {
-                    if (Tuple.mock) {
-                        Tuple.contract = match.replace(' async ', ' ');
-                    } else {
-                        Tuple.contract = match;
-                    }
-                    mocksAndMethods[Tuple.method] = Tuple;
-                    Tuple = {};
-                }
-            });
-        }
 
         Object.values(mocksAndMethods).forEach((tuple: any) => {
             jsonSchema[tuple.method] = jsonSchema[tuple.method] || {};
@@ -218,12 +150,34 @@ SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
 
         const methodResult = `return new MethodResult({} as any);`;
         let classBody = '';
-        // tslint:disable-next-line:max-line-length
-        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.|\n|\r)*? {/g;
-        const mockRegex = /@MethodMock\((.*)\)/;
-        let m;
-        const mocksAndMethods = {};
+        const mocksAndMethods = this.parseSignatures(content);
+
+        Object.values(mocksAndMethods).forEach((tuple: any) => {
+            if (tuple.comment) {
+                classBody += `\n ${tuple.comment}`;
+            }
+
+            if (tuple.method) {
+                // tslint:disable-next-line:max-line-length
+                classBody += `\n ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
+    }
+`;
+            }
+        });
+        const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
+        shell.mkdir('-p', path.join(this.target, 'contracts'));
+        fs.writeFileSync(fullPath, `${HEADER}${fileHead}${classDefinition}${classBody} \n    }\n`);
+
+    }
+
+    parseSignatures(content) {
         let Tuple: any = {};
+        const mocksAndMethods = {};
+        // tslint:disable-next-line:max-line-length
+        const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|@MethodPipe\(.*\)|public (.)*? {/g;
+        const mockRegex = /@MethodMock\((.*)\)/gmi;
+        let m;
+
         // tslint:disable-next-line:no-conditional-assignment
         while ((regex.exec(content)) !== null) {
             m = regex.exec(content);
@@ -278,22 +232,6 @@ SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
                 }
             });
         }
-
-        Object.values(mocksAndMethods).forEach((tuple: any) => {
-            if (tuple.comment) {
-                classBody += `\n ${tuple.comment}`;
-            }
-
-            if (tuple.method) {
-                // tslint:disable-next-line:max-line-length
-                classBody += `\n ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
-    }
-`;
-            }
-        });
-        const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
-        shell.mkdir('-p', path.join(this.target, 'contracts'));
-        fs.writeFileSync(fullPath, `${HEADER}${fileHead}${classDefinition}${classBody} \n    }\n`);
-
+        return mocksAndMethods;
     }
 }

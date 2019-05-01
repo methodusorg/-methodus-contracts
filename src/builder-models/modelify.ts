@@ -80,11 +80,6 @@ export class Modelify {
         }
     }
 
-    capitalize(str) {
-        str = str.toLowerCase();
-        return str[0].toUpperCase() + str.substr(1);
-    }
-
     filterProps(odm) {
         const filtered = Object.keys(odm).filter((prop) => excludeList.indexOf(prop) === -1);
         console.log(`> fields: ${filtered}`);
