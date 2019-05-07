@@ -12,21 +12,21 @@ export class Installer {
         try {
             const intsallResult = this.shell.exec('npm install').code;
             console.log(LINE);
-            console.log('installing deps: ' + (intsallResult === 0));
+            console.log('Completed npm install: ' + (intsallResult === 0));
             if (intsallResult !== 0) {
                 throw (new Error('npm error'));
             }
             const compileResult = this.shell.exec('tsc').code;
-            console.log('compiling generated code: ' + (compileResult === 0));
+            console.log('Compiled generated code: ' + (compileResult === 0));
             console.log(LINE);
 
             if (compileResult !== 0) {
                 throw (new Error('tsc error'));
             }
 
-            const prodInstallResult = this.shell.exec('npm --production').code;
+            const prodInstallResult = this.shell.exec('npm install --production').code;
             console.log(LINE);
-            console.log('installing production deps: ' + (prodInstallResult === 0));
+            console.log('Shaking devDependencies: ' + (prodInstallResult === 0));
             if (prodInstallResult !== 0) {
                 throw (new Error('npm error'));
             }
