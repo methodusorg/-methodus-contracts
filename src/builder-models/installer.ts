@@ -10,11 +10,11 @@ export class Installer {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
         try {
-            const intsallResult = this.shell.exec('yarn').code;
+            const intsallResult = this.shell.exec('npm install').code;
             console.log(LINE);
             console.log('installing deps: ' + (intsallResult === 0));
             if (intsallResult !== 0) {
-                throw (new Error('yarn error'));
+                throw (new Error('npm error'));
             }
             const compileResult = this.shell.exec('tsc').code;
             console.log('compiling generated code: ' + (compileResult === 0));
@@ -24,11 +24,11 @@ export class Installer {
                 throw (new Error('tsc error'));
             }
 
-            const prodInstallResult = this.shell.exec('yarn --production').code;
+            const prodInstallResult = this.shell.exec('npm --production').code;
             console.log(LINE);
             console.log('installing production deps: ' + (prodInstallResult === 0));
             if (prodInstallResult !== 0) {
-                throw (new Error('yarn error'));
+                throw (new Error('npm error'));
             }
         } catch (error) {
             this.shell.cd(cwd);
@@ -41,9 +41,9 @@ export class Installer {
     public link(destFolder) {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
-        this.shell.exec('yarn unlink');
+        this.shell.exec('npm unlink');
 
-        if (this.shell.exec('yarn link').code !== 0) {
+        if (this.shell.exec('npm link').code !== 0) {
             this.shell.cd(cwd);
             throw (new Error('could not link contract'));
         }

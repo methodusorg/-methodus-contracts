@@ -179,14 +179,13 @@ SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
         let m;
 
         // tslint:disable-next-line:no-conditional-assignment
-        while ((regex.exec(content)) !== null) {
-            m = regex.exec(content);
-            if (!m) { break; }
+        while ((m = regex.exec(content)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
-            m.forEach((match: any, groupIndex: number) => {
+
+            m.forEach((match, groupIndex) => {
 
                 if (!match) {
                     return;
@@ -220,7 +219,9 @@ SecurityContext, MethodError, MethodResult } from '@methodus/server'; \n`;
                     match.indexOf('@MessageHandler(') === 0) {
                     Tuple.method = match;
                 }
-
+                if (match.indexOf('@Method(') === 0) {
+                    Tuple.method = match;
+                }
                 if (match.indexOf('public') === 0) {
                     if (Tuple.mock) {
                         Tuple.contract = match.replace(' async ', ' ');

@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "D | Debug contracts",
-            "program": "${workspaceRoot}\\tests\\debug.js",
+            "program": "${workspaceRoot}\\build\\tests\\debug.js",
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
             "outFiles": [],
@@ -25,7 +25,7 @@
             "type": "node",
             "request": "launch",
             "name": "T | Test server contracts | Simple",
-            "program": "${workspaceRoot}\\build_consumers\\server\\simple\\index.js",
+            "program": "${workspaceRoot}\\build\\build_consumers\\server\\simple\\index.js",
             "args": [],
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
@@ -40,7 +40,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile server contracts | Simple",
-            "program": "${workspaceRoot}\\build.js",
+            "program": "${workspaceRoot}\\build\\build.js",
             "args": [
                 "./build_vars/simple/build.json"
             ],
@@ -57,7 +57,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts | Simple",
-            "program": "${workspaceRoot}\\client.js",
+            "program": "${workspaceRoot}\\build\\client.js",
             "args": [
                 "./build_vars/simple/build.json"
             ],
@@ -74,7 +74,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile server contracts | Models",
-            "program": "${workspaceRoot}\\build.js",
+            "program": "${workspaceRoot}\\build\\build.js",
             "args": [
                 "./build_vars/models/build.json"
             ],
@@ -91,7 +91,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts | Models",
-            "program": "${workspaceRoot}\\client.js",
+            "program": "${workspaceRoot}\\build\\client.js",
             "args": [
                 "./build_vars/models/build.json"
             ],
@@ -108,7 +108,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile server contracts | Inherit",
-            "program": "${workspaceRoot}\\build.js",
+            "program": "${workspaceRoot}\\build\\build.js",
             "args": [
                 "./build_vars/inherit/build.json"
             ],
@@ -125,7 +125,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts | Inherit",
-            "program": "${workspaceRoot}\\client.js",
+            "program": "${workspaceRoot}\\build\\client.js",
             "args": [
                 "./build_vars/inherit/build.json"
             ],
@@ -142,7 +142,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile contracts",
-            "program": "${workspaceRoot}\\build.js",
+            "program": "${workspaceRoot}\\build\\build.js",
             "args": [
                 "./build.json"
             ],
@@ -163,7 +163,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts",
-            "program": "${workspaceRoot}\\client.js",
+            "program": "${workspaceRoot}\\build\\client.js",
             "args": [
                 "./build.json"
             ],
@@ -193,7 +193,7 @@
             "stopOnEntry": false,
             // Command line arguments passed to the program.
             "args": [
-                "tests/contracts.spec.js"
+                "build/tests/contracts.spec.js"
             ],
             "sourceMaps": true,
             // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
@@ -219,7 +219,7 @@
             "program": "${workspaceRoot}/node_modules/alsatian/cli/alsatian-cli",
             "stopOnEntry": false,
             "args": [
-                "tests/build.spec.js"
+                "build/tests/build.spec.js"
             ],
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
