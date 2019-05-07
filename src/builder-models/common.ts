@@ -100,13 +100,12 @@ export class Common {
         let Tuple: any = {};
         const mocksAndMethods = {};
         // tslint:disable-next-line:no-conditional-assignment
-        while ((regex.exec(content)) !== null) {
-            m = regex.exec(content);
-            if (!m) { break; }
+        while ((m = regex.exec(content)) !== null) {
             // This is necessary to avoid infinite loops with zero-width matches
             if (m.index === regex.lastIndex) {
                 regex.lastIndex++;
             }
+
             m.forEach((match, groupIndex) => {
 
                 if (!match) {
