@@ -45,7 +45,7 @@ export async function ClientBuilder(contract?: string) {
             const builder = new Client(buildConfiguration[singleConfiguration],
                 singleConfiguration, sourcePath, destPath);
             builder.install(destPath);
-            builder.link(destPath);
+            // builder.link(destPath);
             if (publish) {
                 builder.publish(destPath);
             }

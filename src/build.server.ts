@@ -54,7 +54,7 @@ export async function ServerBuilder(contract?: string) {
                 const builder = new Server(buildConfiguration[singleConfiguration],
                     singleConfiguration, sourcePath, destPath);
                 builder.install(destPath);
-                builder.link(destPath);
+                // builder.link(destPath);
                 if (publish) {
                     builder.publish(destPath);
                 }
