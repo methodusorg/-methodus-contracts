@@ -24,7 +24,7 @@ export class Installer {
                 throw (new Error('tsc error'));
             }
 
-            const prodInstallResult = this.shell.exec('npm install --production').code;
+            const prodInstallResult = this.shell.exec('npm prune --production').code;
             console.log(LINE);
             console.log('Shaking devDependencies: ' + (prodInstallResult === 0));
             if (prodInstallResult !== 0) {
