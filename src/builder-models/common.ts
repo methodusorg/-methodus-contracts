@@ -45,6 +45,14 @@ export class Common {
                     argsLine = argsLine.replace(', securityContext', '').trim();
                 }
 
+                if (argsLine.indexOf(', req') > -1) {
+                    argsLine = argsLine.replace(', req', '').trim();
+                }
+
+                if (argsLine.indexOf(', res') > -1) {
+                    argsLine = argsLine.replace(', res', '').trim();
+                }
+
                 tuple.result = `
         return new Promise<any>(function (resolve, reject) {
             resolve(${tuple.mock}.apply(this,[${argsLine}], [${argsLine}]));
@@ -84,9 +92,14 @@ export class Common {
         const replaceList = ['Method', 'Param', 'Proxy', 'MethodConfig',
             'MethodConfigBase', 'Body', 'Query', 'Response', 'Request', 'Files',
             'Cookies', 'Headers', 'MethodResult', 'MethodError'];
-        classBody = classBody.replace(/\Verbs./g, 'M.Verbs.');
-        classBody = classBody.replace(/, \[.*?\]/g, '');
-        classBody = classBody.replace(/, @SecurityContext\(\) securityContext: any/g, '');
+        classBody = classBody.replace(/\Verbs./gm, 'M.Verbs.');
+        classBody = classBody.replace(/, \[.*?\]/gm, '');
+        classBody = classBody.replace(/@SecurityContext\(\) securityContext: any/gm, '');
+
+        classBody = classBody.replace(/@Request\(\) req: any/gm, '');
+        classBody = classBody.replace(/@Response\(\) res: any/gm, '');
+        classBody = classBody.replace(/\(, /gm, '(');
+        classBody = classBody.replace(/, \)/gm, ')');
         replaceList.forEach((value: string) => {
             classBody = classBody.replace(new RegExp('@' + value, 'g'), '@M.' + value);
         });
