@@ -4,6 +4,8 @@ import * as fs from 'fs';
 import * as shell from 'shelljs';
 import * as colors from 'colors';
 import { HEADER, Configuration } from './interfaces';
+const ROOTSRC = 'src';
+const Console = console;
 
 function handleIncludes(buildConfiguration, body) {
     if (buildConfiguration.includes) {
@@ -48,14 +50,6 @@ export function Exportify(buildConfiguration: Configuration,
         });
     }
 
-    if (!isClient && buildConfiguration.bindings) {
-        const bindings = Object.assign({}, buildConfiguration.bindings);
-        Object.keys(bindings).forEach((contractsKey: string) => {
-            body += `import { ${contractsKey} } from './contracts/${contractsKey.toLocaleLowerCase()}';\n`;
-            body += `export { ${contractsKey} } from './contracts/${contractsKey.toLocaleLowerCase()}';\n`;
-        });
-    }
-
     if (buildConfiguration.contracts) {
         const contracts = buildConfiguration.contracts;
         body += `
@@ -83,23 +77,12 @@ export function Exportify(buildConfiguration: Configuration,
 
     }
 
-    if (!isClient && buildConfiguration.bindings) {
-        const bindings = buildConfiguration.bindings;
-        body += `
-            export function getAdditional(): any[] {
-                return [` +
-            Object.keys(bindings).map((key) => `{contract:  '${key}',
-                                              transport  :'${bindings[key].transport}',
-                                              server: '${bindings[key].server}'}`).join(',');
-        body += `]
-            }`;
-    }
     shell.mkdir('-p', target);
-    fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
+    fs.writeFileSync(path.join(target, ROOTSRC, 'index.ts'), `${HEADER}${head}${body}\n`);
 }
 
 export function ModelsIndex(buildConfiguration: Configuration, source: string, target: string, packageName: string) {
-    // console.log(`building index file for`, packageName)
+
     const head = `/**/\n`;
     let body = '';
 
@@ -123,7 +106,7 @@ export function UseTemplate(fileName, targetFileName, destFolder, replacement?) 
     if (replacement) {
         Object.keys(replacement).forEach((entry) => content = content.replace(`{${entry}}`, replacement[entry]));
     }
-    console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
+    Console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
     fs.writeFileSync(path.join(destFolder, targetFileName), content + '\n');
 }
 export function UseCustomTemplate(fileName, targetFileName, destFolder, replacement?) {
@@ -131,6 +114,6 @@ export function UseCustomTemplate(fileName, targetFileName, destFolder, replacem
     if (replacement) {
         Object.keys(replacement).forEach((entry) => content = content.replace(`{${entry}}`, replacement[entry]));
     }
-    console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
+    Console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
     fs.writeFileSync(path.join(destFolder, targetFileName), content + '\n');
 }

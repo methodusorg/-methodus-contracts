@@ -4,6 +4,8 @@ import * as shell from 'shelljs';
 import { HEADER, Configuration } from './interfaces';
 import { Common } from './common';
 import { Helper } from '../helper';
+const ROOTSRC = 'src';
+const Console = console;
 
 export class Clientify {
     configuration: Configuration;
@@ -15,15 +17,11 @@ export class Clientify {
         this.configuration = configuration;
     }
 
-    CopyFromFile(controllerPath: any, className: string, packageName?: string) {
-        Helper.CopyFromFile.bind(this)(controllerPath, className, packageName);
-    }
-
     ProxifyFromFile(controllerPath: any, className: string, packageName?: string) {
         const content = fs.readFileSync(path.join(this.source, controllerPath), 'utf-8');
 
         shell.mkdir('-p', this.target);
-        console.log('> Generating client contract:', className, packageName);
+        Console.log('> Generating client contract:', className, packageName);
         let fileHead =
             `import * as M from '@methodus/client';
 import { MethodResult } from '@methodus/client';
@@ -69,8 +67,8 @@ import { MethodResult } from '@methodus/client';
 
         const classBody = Common.handleMethods(content);
 
-        const fullPath = path.join(this.target, 'contracts', `${className.toLocaleLowerCase()}.ts`);
-        shell.mkdir('-p', path.join(this.target, 'contracts'));
+        const fullPath = path.join(this.target, ROOTSRC, 'contracts', `${className.toLocaleLowerCase()}.ts`);
+        shell.mkdir('-p', path.join(this.target, ROOTSRC, 'contracts'));
         fs.writeFileSync(fullPath, `${HEADER}${fileHead}${classDefinition}${classBody} \n    }\n`);
     }
 

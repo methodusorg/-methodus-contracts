@@ -1,3 +1,10 @@
+import { Exportify, ModelsIndex } from './exportify';
+const PKGJSON = 'package.json';
+import * as path from 'path';
+import * as fs from 'fs';
+import { Helper } from '../helper';
+const ROOTSRC = 'src';
+
 export class Common {
     static getClassMarker(content) {
         let indexOfMethodConfig = content.indexOf('@MethodConfigBase(');
@@ -106,6 +113,52 @@ export class Common {
         return classBody;
     }
 
+    static commonFlow(configuration, builder, packageName, target, source, isClient) {
+
+        builder.source = source;
+        builder.target = target;
+
+        if (configuration.models) {
+            Object.keys(configuration.models).forEach((modelKey) => {
+                const model = configuration.models[modelKey];
+                builder.modelify.ProxifyFromModel(model.path, modelKey, packageName);
+            });
+        }
+
+        if (configuration.contracts) {
+            Object.keys(configuration.contracts).forEach((contractKey) => {
+                const contract = configuration.contracts[contractKey];
+                builder.proxify.ProxifyFromFile(contract.path, contractKey, packageName);
+
+            });
+        }
+
+        if (configuration.includes) {
+            Object.keys(configuration.includes).forEach((contractKey) => {
+                const contract = configuration.includes[contractKey];
+
+                Helper.CopyFromFile.bind(builder)(contract.path, contractKey, packageName);
+            });
+        }
+
+        if (configuration.declarations) {
+            Object.keys(configuration.declarations).forEach((contractKey) => {
+                const contract = configuration.declarations[contractKey];
+
+                Helper.CopyFromFile.bind(builder)(contract.path, contractKey, packageName);
+            });
+        }
+
+        Exportify(configuration, target, packageName, isClient);
+        if (configuration.dependencies) {
+            const packageData = require(path.join(target, PKGJSON));
+            packageData.dependencies = configuration.dependencies;
+            fs.writeFileSync(path.join(path.join(target, PKGJSON)), JSON.stringify(packageData, null, 2) + '\n');
+        }
+
+        ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
+
+    }
     static parseSigantures(content) {
         const regex = /\/\*\*\s*\n([^\*]*(\*[^\/])?)*\*\/|@MethodMock\(.*\)|@Method\(.*\)|public (.|\n|\r)*? {/g;
         const mockRegex = /@MethodMock\((.*)\)/;

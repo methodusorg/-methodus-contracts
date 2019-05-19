@@ -1,2 +1,3 @@
-*.ts
-!*.d.ts
+*
+!build
+!package.json

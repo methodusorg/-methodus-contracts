@@ -1,5 +1,6 @@
 import * as shelljs from 'shelljs';
 const LINE = '----------------------------------------------------------------------';
+const Console = console;
 export class Installer {
     shell: any;
     constructor() {
@@ -11,22 +12,33 @@ export class Installer {
         this.shell.cd(destFolder);
         try {
             const intsallResult = this.shell.exec('npm install').code;
-            console.log(LINE);
-            console.log('Completed npm install: ' + (intsallResult === 0));
+            Console.log(LINE);
+            Console.log('Completed npm install: ' + (intsallResult === 0));
             if (intsallResult !== 0) {
                 throw (new Error('npm error'));
             }
+
+            const deleteBuildResult = this.shell.exec('rm -rf ./build').code;
+            Console.log('Deleted build folder: ' + (deleteBuildResult === 0));
+
             const compileResult = this.shell.exec('tsc').code;
-            console.log('Compiled generated code: ' + (compileResult === 0));
-            console.log(LINE);
+            Console.log('Compiled generated code: ' + (compileResult === 0));
 
             if (compileResult !== 0) {
                 throw (new Error('tsc error'));
             }
 
+            const deleteSrcResult = this.shell.exec('rm -rf ./src').code;
+            Console.log('Deleted src folder: ' + (deleteSrcResult === 0));
+            Console.log(LINE);
+
+            if (deleteSrcResult !== 0) {
+                throw (new Error('delete error'));
+            }
+
             const prodInstallResult = this.shell.exec('npm prune --production').code;
-            console.log(LINE);
-            console.log('Shaking devDependencies: ' + (prodInstallResult === 0));
+            Console.log(LINE);
+            Console.log('Shaking devDependencies: ' + (prodInstallResult === 0));
             if (prodInstallResult !== 0) {
                 throw (new Error('npm error'));
             }

@@ -3,8 +3,9 @@ import * as fs from 'fs';
 import * as shelljs from 'shelljs';
 import { HEADER, Configuration } from './interfaces';
 import { ModelSchema } from './ModelSchema';
-
+const ROOTSRC = 'src';
 const excludeList = ['collectionName', 'transform'];
+const Console = console;
 export class Modelify {
     buildConfiguration: Configuration;
     allModels: any;
@@ -24,7 +25,7 @@ export class Modelify {
     ProxifyFromModel(modelSource: any, className: string, packageName: string) {
 
         shelljs.mkdir('-p', this.target);
-        console.log('Generating Model for:', className);
+        Console.log('Generating Model for:', className);
         let modelBody = '';
         try {
             let basicSourcePath = path.join(this.source, modelSource);
@@ -72,8 +73,8 @@ export class Modelify {
                 importRow = `import { ${importTypes.join(',')} } from '../';\n`;
             }
 
-            shelljs.mkdir('-p', path.join(this.target, 'models'));
-            fs.writeFileSync(path.join(this.target, 'models', `${className.toLocaleLowerCase()}.ts`),
+            shelljs.mkdir('-p', path.join(this.target, ROOTSRC, 'models'));
+            fs.writeFileSync(path.join(this.target, ROOTSRC, 'models', `${className.toLocaleLowerCase()}.ts`),
                 `${HEADER}${importRow}${customeSection}${modelBody}\n`);
         } catch (ex) {
             console.error(ex);
@@ -82,7 +83,7 @@ export class Modelify {
 
     filterProps(odm) {
         const filtered = Object.keys(odm).filter((prop) => excludeList.indexOf(prop) === -1);
-        console.log(`> fields: ${filtered}`);
+        Console.log(`> fields: ${filtered}`);
         return filtered;
     }
 

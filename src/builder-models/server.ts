@@ -6,7 +6,9 @@ import { Configuration } from './interfaces';
 
 import * as path from 'path';
 import * as fs from 'fs';
+import { Common } from './common';
 const PKGJSON = 'package.json';
+const ROOTSRC = 'src';
 
 export class Server {
     modelify: Modelify;
@@ -17,44 +19,6 @@ export class Server {
         this.modelify = new Modelify(configuration, source, target);
         this.proxify = new Proxify(configuration, source, target);
         this.Installer = new Installer();
-
-        if (configuration.models) {
-            Object.keys(configuration.models).forEach((modelKey) => {
-                const model = configuration.models[modelKey];
-                this.modelify.ProxifyFromModel(model.path, modelKey, packageName);
-            });
-        }
-
-        if (configuration.contracts) {
-            Object.keys(configuration.contracts).forEach((contractKey) => {
-                const contract = configuration.contracts[contractKey];
-                this.proxify.ProxifyFromFile(contract.path, contractKey, packageName);
-
-            });
-        }
-
-        if (configuration.bindings) {
-            Object.keys(configuration.bindings).forEach((contractKey) => {
-                const contract = configuration.bindings[contractKey];
-                this.proxify.ProxifyFromBinding(contract.path, contractKey, packageName);
-            });
-        }
-
-        if (configuration.includes) {
-            Object.keys(configuration.includes).forEach((contractKey) => {
-                const contract = configuration.includes[contractKey];
-                this.proxify.CopyFromFile(contract.path, contractKey, packageName);
-            });
-        }
-
-        if (configuration.declarations) {
-            Object.keys(configuration.declarations).forEach((contractKey) => {
-                const contract = configuration.declarations[contractKey];
-                this.proxify.CopyFromFile(contract.path, contractKey, packageName);
-            });
-        }
-
-        Exportify(configuration, target, packageName);
 
         const originalPackage = require(path.join(source, PKGJSON));
         UseTemplate('_package.json', PKGJSON, target,
@@ -69,13 +33,8 @@ export class Server {
             UseTemplate('_.npmrc', '.npmrc', target);
         }
 
-        if (configuration.dependencies) {
-            const packageData = require(path.join(target, PKGJSON));
-            packageData.dependencies = configuration.dependencies;
-            fs.writeFileSync(path.join(path.join(target, PKGJSON)), JSON.stringify(packageData, null, 2) + '\n');
-        }
+        Common.commonFlow(configuration, this, packageName, target, source, false);
 
-        ModelsIndex(configuration, source, path.join(target, 'models'), packageName);
     }
 
     public link(dest) {

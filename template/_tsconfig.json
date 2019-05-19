@@ -3,8 +3,9 @@
         "typeRoots": [
             "./node_modules/@types"
         ],
+        "outDir": "build",
         "declaration": true,
-        "target": "es2015",
+        "target": "es2017",
         "module": "commonjs",
         "moduleResolution": "node",
         "sourceMap": true,
