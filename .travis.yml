@@ -13,11 +13,6 @@ addons:
   sonarcloud:
     organization: "nodulusteam-github" # the key of the org you chose at step #3  
 before_script:  
-  - npm run build
-  - pwd
-  - ls
-  - cd src
-  - ls
-  - cd ..
+  - npm run build 
 script:
   - sonar-scanner
