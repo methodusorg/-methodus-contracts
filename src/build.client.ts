@@ -58,4 +58,5 @@ export async function ClientBuilder(contract?: string) {
     });
     Console.log(checkList.join('\n'));
     Console.log('completed build plan, exiting.');
+    return true;
 }

@@ -32,7 +32,7 @@ export async function ServerBuilder(contract?: string) {
     Console.log(checkList.join('\n'));
 
     Console.log('completed server build plan, exiting.');
-
+    return true;
 }
 
 async function build(buildConfiguration: any, checkList: string[], publish: boolean) {
@@ -74,4 +74,5 @@ async function build(buildConfiguration: any, checkList: string[], publish: bool
             Console.error(error);
         }
     });
+    return true;
 }

@@ -107,6 +107,7 @@ export function UseTemplate(fileName, targetFileName, destFolder, replacement?) 
         Object.keys(replacement).forEach((entry) => content = content.replace(`{${entry}}`, replacement[entry]));
     }
     Console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
+    shell.mkdir('-p', destFolder);
     fs.writeFileSync(path.join(destFolder, targetFileName), content + '\n');
 }
 export function UseCustomTemplate(fileName, targetFileName, destFolder, replacement?) {
@@ -114,6 +115,7 @@ export function UseCustomTemplate(fileName, targetFileName, destFolder, replacem
     if (replacement) {
         Object.keys(replacement).forEach((entry) => content = content.replace(`{${entry}}`, replacement[entry]));
     }
+    shell.mkdir('-p', destFolder);
     Console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
     fs.writeFileSync(path.join(destFolder, targetFileName), content + '\n');
 }
