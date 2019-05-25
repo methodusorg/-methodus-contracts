@@ -9,12 +9,11 @@
     },
     "scripts": {
         "tslint": "tslint --project",
-        "check-coverage": "nyc --reporter=lcov --reporter=html npm run xtest && nyc report",
+        "check-coverage": "nyc --reporter=lcov --reporter=html npm run test:tests && nyc report",
         "pretest": "tsc",
         "build": "tsc",
-        "test": "npm run check-coverage",
-        "prepublishOnly": "npm version patch",
-        "xtest": "set test='true'&alsatian build/tests/*.spec.js ",
+        "test": "npm run check-coverage",        
+        "test:tests": "set test='true'&alsatian build/tests/*.spec.js ",
         "test:server": "npm run test:server:* ",
         "test:server:simple": "node build/build.js ./build_vars/simple/build.json",
         "test:server:models": "node build/build.js ./build_vars/models/build.json",
@@ -39,7 +38,7 @@
         "typescript": "^3.4.0"
     },
     "dependencies": {
-        "@methodus/data": "^2.0.3",
+        "@methodus/data": "^2.0.21",
         "colors": "^1.1.2",
         "del": "^3.0.0",
         "glob": "^7.1.3",
