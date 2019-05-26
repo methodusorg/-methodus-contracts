@@ -102,7 +102,7 @@ export function ModelsIndex(buildConfiguration: Configuration, source: string, t
 }
 
 export function UseTemplate(fileName, targetFileName, destFolder, replacement?) {
-    let content = fs.readFileSync(path.resolve(path.join(__dirname, '../../../template', fileName)), 'utf-8');
+    let content = fs.readFileSync(path.resolve(path.join(__dirname, '../../template', fileName)), 'utf-8');
     if (replacement) {
         Object.keys(replacement).forEach((entry) => content = content.replace(`{${entry}}`, replacement[entry]));
     }
