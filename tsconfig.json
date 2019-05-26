@@ -4,6 +4,7 @@
         "moduleResolution": "node",
         "module": "commonjs",
         "outDir": "build",
+        "rootDir": "src",
         "sourceMap": true, /* Generates corresponding '.map' file. */
         "declaration": false,
         "allowSyntheticDefaultImports": true,

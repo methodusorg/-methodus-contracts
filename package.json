@@ -1,6 +1,6 @@
 {
     "name": "@methodus/contracts",
-    "version": "4.0.0",
+    "version": "4.0.1",
     "description": "",
     "main": "build/index.js",
     "bin": {
@@ -12,7 +12,7 @@
         "check-coverage": "nyc --reporter=lcov --reporter=html npm run test:tests && nyc report",
         "pretest": "tsc",
         "build": "tsc",
-        "test": "npm run check-coverage",        
+        "test": "npm run check-coverage",
         "test:tests": "set test='true'&alsatian build/tests/*.spec.js ",
         "test:server": "npm run test:server:* ",
         "test:server:simple": "node build/build.js ./build_vars/simple/build.json",
@@ -40,8 +40,6 @@
     "dependencies": {
         "@methodus/data": "^2.0.21",
         "colors": "^1.1.2",
-        "del": "^3.0.0",
-        "glob": "^7.1.3",
         "jsdoc-regex": "^1.0.1",
         "shelljs": "^0.7.8"
     }

@@ -1,5 +1,5 @@
 import { AsyncTest, Expect, Test, TestCase, TestFixture, Timeout, FocusTest } from 'alsatian';
-import { ServerBuilder } from '../src/build.server';
+import { ServerBuilder } from '../build.server';
 import * as path from 'path';
 const logger = console;
 @TestFixture('Build server contracts')

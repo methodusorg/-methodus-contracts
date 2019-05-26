@@ -1,7 +1,6 @@
 import { AsyncTest, Expect, Test, TestCase, TestFixture, Timeout } from 'alsatian';
-import { ClientBuilder } from '../src/build.client';
+import { ClientBuilder } from '../build.client';
 import * as path from 'path';
-
 
 @TestFixture('Build client contracts')
 export class Logs {
