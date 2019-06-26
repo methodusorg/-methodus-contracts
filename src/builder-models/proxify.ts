@@ -3,13 +3,14 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as shell from 'shelljs';
 import { HEADER, Configuration } from './interfaces';
-import { Helper } from '../helper';
 const ROOTSRC = 'src';
 const Console = console;
 const baseImportStr = `import { Proxy, Method, MethodPipe, MethodConfig, MethodConfigBase,
     MethodConfigExtend, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies,
     Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
 const mockRegex = /@MethodMock\((.*)\)/gmi;
+
+let Tuple: any = {};
 
 export class Proxify {
     configuration: Configuration;
@@ -21,7 +22,7 @@ export class Proxify {
     fileHead = '';
     controllerPath = '';
     packageName = '';
-    constructor(configuration: Configuration, source, target) {
+    constructor(configuration: Configuration, source: any, target: any) {
         this.source = source;
         this.target = target;
         this.configuration = configuration;
@@ -142,7 +143,7 @@ export class Proxify {
         if (!match) {
             return;
         }
-        const Tuple: any = {};
+
         if (match.indexOf('/*') === 0) {
             Tuple.comment = match;
         }
@@ -172,6 +173,7 @@ export class Proxify {
             Tuple.method = match;
         }
         if (match.indexOf('@Method(') === 0) {
+            Tuple = {};
             Tuple.method = match;
         }
         if (match.indexOf('public') === 0) {
@@ -180,7 +182,7 @@ export class Proxify {
             } else {
                 Tuple.contract = match;
             }
-            mocksAndMethods[Tuple.method] = Tuple;
+            mocksAndMethods[Tuple.method] = JSON.parse(JSON.stringify(Tuple));
 
         }
     }
