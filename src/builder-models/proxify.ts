@@ -7,7 +7,7 @@ const ROOTSRC = 'src';
 const Console = console;
 const baseImportStr = `import { Proxy, Method, MethodPipe, MethodConfig, MethodConfigBase,
     MethodConfigExtend, Verbs, MethodType, Body, Param, Query, Response, Request, Files, Cookies,
-    Headers, SecurityContext, MethodResult, MethodError } from '@methodus/server';\n`;
+    Headers, SecurityContext, MethodResult,MethodResultStatus, MethodError } from '@methodus/server';\n`;
 const mockRegex = /@MethodMock\((.*)\)/gmi;
 
 let Tuple: any = {};

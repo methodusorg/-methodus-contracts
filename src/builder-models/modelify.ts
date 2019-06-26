@@ -45,20 +45,33 @@ export class Modelify {
 
             const modelSchema = new ModelSchema(className);
             let basicPath = path.join(this.source, modelSource);
+            let sourcePath = path.join(this.source, modelSource);
             if (this.buildConfiguration.buildFolder) {
                 basicPath = path.join(this.source, this.buildConfiguration.buildFolder, modelSource);
+                sourcePath = basicPath;
             } else if (this.buildConfiguration.srcFolder) {
                 basicPath = path.join(this.source, this.buildConfiguration.srcFolder, modelSource);
+                sourcePath = basicPath;
             }
+            if (this.buildConfiguration.srcFolder) {
+                sourcePath = path.join(this.source, this.buildConfiguration.srcFolder, modelSource);
+            }
+            // load the text too
+            const fileContent = fs.readFileSync(sourcePath, { encoding: 'utf-8' });
 
             const modelRequire = require(basicPath.replace('.ts', ''));
             let importRow = '';
-            let importTypes = [];
+            let importTypes: any = [];
             Object.keys(modelRequire).forEach((modelClassKey) => {
+
                 const innerClass = modelRequire[modelClassKey];
                 const odm = innerClass.odm;
                 if (odm) {
                     importTypes = this.concatImportTypes(odm, importTypes);
+
+                    if (fileContent.indexOf(`${modelClassKey}<`) > -1) {// check for generics
+                        modelClassKey = modelClassKey + '<T>';
+                    }
                     modelBody += `export interface ${modelClassKey} {\n`;
                     this.filterProps(innerClass.odm.fields).forEach((odmItem) => {
                         modelSchema.properties[this.fixProperty(odm.fields[odmItem])] = odm.fields[odmItem];
