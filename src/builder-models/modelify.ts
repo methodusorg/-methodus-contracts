@@ -85,10 +85,16 @@ export class Modelify {
             if (importTypes.length) {
                 importRow = `import { ${importTypes.join(',')} } from '../';\n`;
             }
-
-            shelljs.mkdir('-p', path.join(this.target, ROOTSRC, 'models'));
-            fs.writeFileSync(path.join(this.target, ROOTSRC, 'models', `${className.toLocaleLowerCase()}.ts`),
+            const modlesPath = path.join(this.target, ROOTSRC, 'models');
+            shelljs.mkdir('-p', modlesPath);
+            fs.writeFileSync(path.join(modlesPath, `${className.toLocaleLowerCase()}.ts`),
                 `${HEADER}${importRow}${customeSection}${modelBody}\n`);
+
+            const schemasPath = path.join(this.target, 'schemas');
+            shelljs.mkdir('-p', schemasPath);
+            const jsonPath = path.join(schemasPath, `${className.toLocaleLowerCase()}.json`);
+            fs.writeFileSync(jsonPath, JSON.stringify(modelSchema, null, 2) + '\n');
+
         } catch (ex) {
             console.error(ex);
         }

@@ -81,8 +81,13 @@ export class Proxify {
             indexOfMethodConfig = this.content.indexOf('@MethodConfig(');
         }
 
+        let actualClassPath = this.controllerPath.replace(/\.\.\//g, '').replace('.ts', '');
+        if (this.configuration.buildFolder && this.configuration.srcFolder) {
+            actualClassPath = actualClassPath.replace(this.configuration.srcFolder, this.configuration.buildFolder);
+        }
+
         // tslint:disable-next-line:max-line-length
-        const proxyDecorator = `@Proxy.ProxyClass('${this.packageName}', '${this.className}', '${this.controllerPath.replace(/\.\.\//g, '').replace('.ts', '')}')\n`;
+        const proxyDecorator = `@Proxy.ProxyClass('${this.packageName}', '${this.className}', '${actualClassPath}')\n`;
 
         let classMarker = this.content.substring(indexOfMethodConfig, this.content.indexOf('{', indexOfMethodConfig));
         if (classMarker.indexOf(',') > -1) {
@@ -94,16 +99,16 @@ export class Proxify {
         let classBody = '';
 
         const mocksAndMethods = this.parseSignatures(this.content);
-        const jsonSchema = {};
+        // const jsonSchema = {};
 
         Object.values(mocksAndMethods).forEach((tuple: any) => {
-            jsonSchema[tuple.method] = jsonSchema[tuple.method] || {};
+            // jsonSchema[tuple.method] = jsonSchema[tuple.method] || {};
             if (tuple.comment) {
-                jsonSchema[tuple.method].comment = tuple.comment;
+                // jsonSchema[tuple.method].comment = tuple.comment;
                 classBody += `\n  ${tuple.comment}`;
             }
             if (tuple.method) {
-                jsonSchema[tuple.method].contract = tuple.contract;
+                // jsonSchema[tuple.method].contract = tuple.contract;
                 // tslint:disable-next-line:max-line-length
                 classBody += `\n  ${tuple.method}\n    ${tuple.contract}\n        ${(tuple.result ? tuple.result : methodResult)}
 }
@@ -114,8 +119,7 @@ export class Proxify {
         const fullPath = path.join(this.target, ROOTSRC, 'contracts', `${this.className.toLocaleLowerCase()}.ts`);
         shell.mkdir('-p', path.join(this.target, ROOTSRC, 'contracts'));
         fs.writeFileSync(fullPath, `${HEADER}${this.fileHead}${classDefinition}${classBody} \n    }\n`);
-        const jsonPath = path.join(this.target, ROOTSRC, 'contracts', `${this.className.toLocaleLowerCase()}.json`);
-        fs.writeFileSync(jsonPath, JSON.stringify(jsonSchema, null, 2) + '\n');
+
     }
 
     parseSignatures(content) {
