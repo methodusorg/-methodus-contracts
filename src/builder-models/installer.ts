@@ -21,19 +21,22 @@ export class Installer {
             const deleteBuildResult = this.shell.exec('rm -rf ./build').code;
             Console.log('Deleted build folder: ' + (deleteBuildResult === 0));
 
+
             const compileResult = this.shell.exec('tsc').code;
             Console.log('Compiled generated code: ' + (compileResult === 0));
 
             if (compileResult !== 0) {
-                throw (new Error('tsc error'));
+                console.error('tsc Error', compileResult);
             }
+
+
 
             const deleteSrcResult = this.shell.exec('rm -rf ./src').code;
             Console.log('Deleted src folder: ' + (deleteSrcResult === 0));
             Console.log(LINE);
 
             if (deleteSrcResult !== 0) {
-                throw (new Error('delete error'));
+                console.error('delete Error');
             }
 
             const prodInstallResult = this.shell.exec('npm prune --production').code;

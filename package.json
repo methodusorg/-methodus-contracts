@@ -1,6 +1,6 @@
 {
     "name": "@methodus/contracts",
-    "version": "4.0.6",
+    "version": "4.1.6",
     "description": "",
     "main": "build/index.js",
     "bin": {
@@ -8,21 +8,21 @@
         "contracts-client": "build/client.js"
     },
     "scripts": {
-        "tslint": "tslint --project",
-        "check-coverage": "nyc --reporter=lcov --reporter=html npm run test:tests && nyc report",
-        "pretest": "tsc",
         "build": "tsc",
+        "tslint": "tslint --project",
         "test": "npm run check-coverage",
-        "test:tests": "set test='true'&alsatian build/tests/*.spec.js ",
-        "test:server": "npm run test:server:* ",
+        "check-coverage": "nyc --reporter=lcov --reporter=html npm run test:tests && nyc report",
+        "test:tests": "set test='true'& alsatian build/tests/*.spec.js ",
+        "test:server": "run-s test:server:* ",
         "test:server:simple": "node build/build.js ./build_vars/simple/build.json",
         "test:server:models": "node build/build.js ./build_vars/models/build.json",
         "test:server:inherit": "node build/build.js ./build_vars/inherit/build.json",
         "test:server:consumer:simple": "node build_consumers/server/simple/index.js",
-        "test:client": "npm run test:client:simple & npm run test:client:models & npm run test:client:inherit ",
+        "test:client": "run-s test:client:*",
         "test:client:simple": "node build/client.js ./build_vars/simple/build.json",
         "test:client:models": "node build/client.js ./build_vars/models/build.json",
         "test:client:inherit": "node build/client.js ./build_vars/inherit/build.json",
+        "pretest": "tsc",
         "sonar": "sonar-scanner.bat -Dsonar.projectKey=nodulusteam_-methodus-contracts -Dsonar.organization=nodulusteam-github -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=e01e7adc2647251c0651a3bab28de27b479b4432"
     },
     "author": "",
@@ -32,10 +32,11 @@
         "@methodus/server": "latest",
         "@types/lodash": "^4.14.75",
         "@types/node": "^8.0.31",
-        "alsatian": "^2.0.0",
+        "alsatian": "^3.0.1",
         "nyc": "^13.1.0",
         "tslint": "^5.12.0",
-        "typescript": "^3.4.0"
+        "typescript": "^3.4.0",
+        "npm-run-all": "^4.1.5"
     },
     "dependencies": {
         "@methodus/data": "^2.0.21",

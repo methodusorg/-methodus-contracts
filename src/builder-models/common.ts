@@ -96,9 +96,13 @@ export class Common {
             }
         });
 
-        const replaceList = ['Method', 'Param', 'Proxy', 'MethodConfig',
-            'MethodConfigBase', 'Body', 'Query', 'Response', 'Request', 'Files',
-            'Cookies', 'Headers', 'MethodResult', 'MethodError'];
+        const replaceList = ['Method', 'Proxy', 'MethodConfig',
+            'MethodConfigBase', 'MethodResult', 'MethodError'];
+
+        const paramsReplaceList = ['Param', 'Body', 'Query', 'Files',
+            'Cookies', 'Headers',];
+
+
         classBody = classBody.replace(/\Verbs./gm, 'M.Verbs.');
         classBody = classBody.replace(/, \[.*?\]/gm, '');
         classBody = classBody.replace(/@SecurityContext\(\) securityContext: any/gm, '');
@@ -107,9 +111,14 @@ export class Common {
         classBody = classBody.replace(/@Response\(\) res: any/gm, '');
         classBody = classBody.replace(/\(, /gm, '(');
         classBody = classBody.replace(/, \)/gm, ')');
+
         replaceList.forEach((value: string) => {
             classBody = classBody.replace(new RegExp('@' + value, 'g'), '@M.' + value);
         });
+        paramsReplaceList.forEach((value: string) => {
+            classBody = classBody.replace(new RegExp('@' + value, 'g'), '@M.P.' + value);
+        });
+
         return classBody;
     }
 
