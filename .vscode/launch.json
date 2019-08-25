@@ -214,12 +214,12 @@
         {
             "request": "launch",
             "console": "internalConsole",
-            "name": "T | Run Build Contracts test",
+            "name": "T | Run Client Contracts test",
             "type": "node",
-            "program": "${workspaceRoot}/node_modules/alsatian/cli/alsatian-cli",
+            "program": "${workspaceRoot}/node_modules/alsatian/dist/cli/alsatian-cli",
             "stopOnEntry": false,
             "args": [
-                "build/tests/build.spec.js"
+                "build/tests/client.spec.js"
             ],
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
