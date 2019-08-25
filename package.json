@@ -11,8 +11,8 @@
         "build": "tsc",
         "tslint": "tslint --project",
         "test": "npm run check-coverage",
-        "check-coverage": "nyc --reporter=lcov --reporter=html npm run test:tests && nyc report",
-        "test:tests": "set test='true'& alsatian build/tests/*.spec.js ",
+        "check-coverage": "nyc npm run test:tests",
+        "test:tests": "alsatian build/tests/*.spec.js",
         "test:server": "run-s test:server:* ",
         "test:server:simple": "node build/build.js ./build_vars/simple/build.json",
         "test:server:models": "node build/build.js ./build_vars/models/build.json",
@@ -26,17 +26,22 @@
         "sonar": "sonar-scanner.bat -Dsonar.projectKey=nodulusteam_-methodus-contracts -Dsonar.organization=nodulusteam-github -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=e01e7adc2647251c0651a3bab28de27b479b4432"
     },
     "author": "",
-    "license": "ISC",
+    "license": "BSD",
+    "nyc": {
+        "extends": "@istanbuljs/nyc-config-typescript",
+        "all": true,
+        "check-coverage": true
+    },
     "devDependencies": {
         "@methodus/client": "latest",
         "@methodus/server": "latest",
         "@types/lodash": "^4.14.75",
         "@types/node": "^8.0.31",
         "alsatian": "^3.0.1",
-        "nyc": "^13.1.0",
+        "npm-run-all": "^4.1.5",
+        "nyc": "^14.1.1",
         "tslint": "^5.12.0",
-        "typescript": "^3.4.0",
-        "npm-run-all": "^4.1.5"
+        "typescript": "^3.4.0"
     },
     "dependencies": {
         "@methodus/data": "^2.0.21",
