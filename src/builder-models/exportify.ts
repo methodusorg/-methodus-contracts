@@ -7,79 +7,81 @@ import { HEADER, Configuration } from './interfaces';
 const ROOTSRC = 'src';
 const Console = console;
 
-function handleIncludes(buildConfiguration, body) {
-    if (buildConfiguration.includes) {
-        Object.keys(buildConfiguration.includes).forEach((modelKey: string) => {
-            const currentBindingInclude = buildConfiguration.includes[modelKey];
-            if (currentBindingInclude.path.indexOf('.ts') > -1) {
-                if (!currentBindingInclude.alias) {
-                    body += `export { ${modelKey}  } from './includes/${modelKey.toLocaleLowerCase()}';\n`;
-                } else {
-                    body += `export * from './includes/${modelKey.toLocaleLowerCase()}';\n`;
-                }
-            }
-        });
-    }
-    return body;
-}
+// function handleIncludes(buildConfiguration, body) {
+//     if (buildConfiguration.includes) {
+//         Object.keys(buildConfiguration.includes).forEach((modelKey: string) => {
+//             const currentBindingInclude = buildConfiguration.includes[modelKey];
+//             if (currentBindingInclude.path.indexOf('.ts') > -1) {
+//                 if (!currentBindingInclude.alias) {
+//                     body += `export { ${modelKey}  } from './includes/${modelKey.toLocaleLowerCase()}';\n`;
+//                 } else {
+//                     body += `export * from './includes/${modelKey.toLocaleLowerCase()}';\n`;
+//                 }
+//             }
+//         });
+//     }
+//     return body;
+// }
 
-function handleModels(buildConfiguration, body) {
-    if (buildConfiguration.models) {
-        Object.keys(buildConfiguration.models).forEach((modelKey: string) => {
-            const fixedModelName = (modelKey.endsWith('Model')) ? modelKey : modelKey + 'Model';
-            body += `import { ${modelKey} as ${fixedModelName} } from './models/${modelKey.toLocaleLowerCase()}';\n`;
-            body += `export { ${modelKey} as ${fixedModelName} } from './models/${modelKey.toLocaleLowerCase()}';\n`;
-        });
-    }
-    return body;
+// function handleModels(buildConfiguration, body) {
+//     if (buildConfiguration.models) {
+//         Object.keys(buildConfiguration.models).forEach((modelKey: string) => {
+//             const fixedModelName = (modelKey.endsWith('Model')) ? modelKey : modelKey + 'Model';
+//             body += `import { ${modelKey} as ${fixedModelName} } from './models/${modelKey.toLocaleLowerCase()}';\n`;
+//             body += `export { ${modelKey} as ${fixedModelName} } from './models/${modelKey.toLocaleLowerCase()}';\n`;
+//         });
+//     }
+//     return body;
 
-}
-export function Exportify(buildConfiguration: Configuration,
-    target: string, packageName: string, isClient = false) {
-
-    const head = `/**/\n`;
-    let body = '';
-    body = handleIncludes(buildConfiguration, body);
-    body = handleModels(buildConfiguration, body);
-
-    if (buildConfiguration.contracts) {
-        const contracts = Object.assign({}, buildConfiguration.contracts);
-        Object.keys(contracts).forEach((contractsKey: string) => {
-            body += `import { ${contractsKey} } from './contracts/${contractsKey.toLocaleLowerCase()}';\n`;
-            body += `export { ${contractsKey} } from './contracts/${contractsKey.toLocaleLowerCase()}';\n`;
-        });
-    }
-
-    if (buildConfiguration.contracts) {
-        const contracts = buildConfiguration.contracts;
-        body += `
+// }
 
 
-            export function getAll(): string[] {
-                return [` +
-            Object.keys(contracts).map((key) => `'${key}'`).join(',');
-        body += `]
-            }`;
+// export function Exportify(buildConfiguration: Configuration,
+//     target: string, packageName: string, isClient = false) {
 
-        body += `
-            export function get(contractName: string) {
-                switch (contractName) {`;
-        Object.keys(contracts).forEach((contractsKey: string) => {
+//     const head = `/**/\n`;
+//     let body = '';
+//     body = handleIncludes(buildConfiguration, body);
+//     body = handleModels(buildConfiguration, body);
 
-            body += `
-                    case '${contractsKey}':
-                        return ${contractsKey};`;
-        });
+//     if (buildConfiguration.contracts) {
+//         const contracts = Object.assign({}, buildConfiguration.contracts);
+//         Object.keys(contracts).forEach((contractsKey: string) => {
+//             body += `import { ${contractsKey} } from './contracts/${contractsKey.toLocaleLowerCase()}';\n`;
+//             body += `export { ${contractsKey} } from './contracts/${contractsKey.toLocaleLowerCase()}';\n`;
+//         });
+//     }
 
-        body += `
-                }
-            }`;
+//     if (buildConfiguration.contracts) {
+//         const contracts = buildConfiguration.contracts;
+//         body += `
 
-    }
 
-    shell.mkdir('-p', target);
-    fs.writeFileSync(path.join(target, ROOTSRC, 'index.ts'), `${HEADER}${head}${body}\n`);
-}
+//             export function getAll(): string[] {
+//                 return [` +
+//             Object.keys(contracts).map((key) => `'${key}'`).join(',');
+//         body += `]
+//             }`;
+
+//         body += `
+//             export function get(contractName: string) {
+//                 switch (contractName) {`;
+//         Object.keys(contracts).forEach((contractsKey: string) => {
+
+//             body += `
+//                     case '${contractsKey}':
+//                         return ${contractsKey};`;
+//         });
+
+//         body += `
+//                 }
+//             }`;
+
+//     }
+
+//     shell.mkdir('-p', target);
+//     fs.writeFileSync(path.join(target, ROOTSRC, 'index.ts'), `${HEADER}${head}${body}\n`);
+// }
 
 export function ModelsIndex(buildConfiguration: Configuration, source: string, target: string, packageName: string) {
 

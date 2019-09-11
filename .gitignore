@@ -13,3 +13,4 @@ build_path/
 .scannerwork/
 coverage/
 .npmrc
+output/

@@ -3,15 +3,15 @@
     "version": "{version}",
     "description": "",
     "main": "build/index",
-    "scripts": {
-        "build": "tsc",
+    "scripts": {        
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "@methodus/server": "latest",
-        "@types/node": "^8.0.0"
+        "@types/node": "^8.0.0",
+        "typescript": "^3.6.3"
     },
     "dependencies": {}
 }

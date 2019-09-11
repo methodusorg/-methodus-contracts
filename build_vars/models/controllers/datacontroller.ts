@@ -1,6 +1,6 @@
-import { MethodConfig, Method, Param, MethodResult, Body } from '@methodus/server';
-import { Verbs } from '@methodus/server/src/rest';
+import { MethodConfig, Method, Param, MethodResult, Body, Verbs } from '@methodus/server';
 import { Query as DataQuery } from '@methodus/data';
+import { UserModel } from '../models/user.model';
 
 @MethodConfig('Data')
 export class DataController {
@@ -9,10 +9,10 @@ export class DataController {
     this comment should stay all the way up to the contract
     */
     @Method(Verbs.Get, '/id/:id')
-    public static async get(@Param('id') id: string): Promise<MethodResult> {
+    public static async get(@Param('id') id: string): Promise<MethodResult<UserModel>> {
         const repo = (this as any).methodus.repository;
         const item = await repo.get(id);
-        return new MethodResult(item);
+        return new MethodResult<UserModel>(item);
     }
 
     @Method(Verbs.Post, '/insert')

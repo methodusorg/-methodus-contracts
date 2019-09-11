@@ -1,8 +1,6 @@
 
-import { Modelify } from './modelify';
-import { UseTemplate, Exportify, ModelsIndex, UseCustomTemplate } from './exportify';
+import { UseTemplate, ModelsIndex, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
-import { Clientify } from './clientify';
 import { Configuration } from './interfaces';
 import * as path from 'path';
 import * as fs from 'fs';
@@ -10,14 +8,10 @@ import { Common } from './common';
 const ROOTSRC = 'src';
 const PKGJSON = 'package.json';
 export class Client {
-    modelify: Modelify;
     Installer: Installer;
-    proxify: Clientify;
-    constructor(configuration: Configuration, packageName: string, source: string, target: string) {
+    constructor(configuration: Configuration, source: string, target: string) {
 
         this.Installer = new Installer();
-        this.proxify = new Clientify(configuration, source, target);
-        this.modelify = new Modelify(configuration, source, target, true);
         const originalPackage = require(path.join(source, PKGJSON));
         UseTemplate('_package.client.json', PKGJSON, target,
             { name: configuration.contractNameClient, version: originalPackage.version });
@@ -31,8 +25,6 @@ export class Client {
             UseTemplate('_.npmrc', '.npmrc', target);
         }
 
-        Common.commonFlow(configuration, this, packageName, target, source, true);
-
     }
     public link(dest: string) {
         this.Installer.link(dest);
@@ -44,4 +36,13 @@ export class Client {
     public install(dest: string) {
         this.Installer.build(dest);
     }
+    public compile(dest) {
+        this.Installer.compile(dest);
+    }
+
+    public prune(dest) {
+        this.Installer.prune(dest);
+    }
+
+
 }

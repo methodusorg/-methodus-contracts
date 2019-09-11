@@ -11,7 +11,8 @@
     "license": "ISC",
     "devDependencies": {
         "@methodus/client": "~3.0.1",
-        "@types/node": "^7.0.31"
+        "@types/node": "^7.0.31",
+        "typescript": "^3.6.3"
     },
     "dependencies": {}
 }

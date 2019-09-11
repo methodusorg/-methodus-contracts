@@ -46,9 +46,11 @@
             ],
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
+            "outputCapture": "std",
             "outFiles": [],
             "sourceMaps": true,
             "env": {
+                
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }
@@ -66,6 +68,7 @@
             "outFiles": [],
             "sourceMaps": true,
             "env": {
+                
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }
@@ -188,12 +191,12 @@
             // Type of configuration. Possible values: "node", "mono".
             "type": "node",
             // Workspace relative or absolute path to the program.
-            "program": "${workspaceRoot}/node_modules/alsatian/cli/alsatian-cli",
+            "program": "${workspaceRoot}/node_modules/alsatian/dist/cli/alsatian-cli",
             // Automatically stop program after launch.
             "stopOnEntry": false,
             // Command line arguments passed to the program.
             "args": [
-                "build/tests/contracts.spec.js"
+                "build/tests/*.spec.js"
             ],
             "sourceMaps": true,
             // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.

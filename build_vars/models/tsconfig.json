@@ -3,8 +3,7 @@
         "typeRoots": [
             "./node_modules/@types"
         ],
-        
-        "rootDir": "src",
+        "rootDir": "./",
         "outDir": "build",
         "declaration": true,
         "target": "es2017",
