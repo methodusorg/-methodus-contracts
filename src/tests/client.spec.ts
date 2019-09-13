@@ -1,5 +1,5 @@
 import { Expect, Test, TestCase, TestFixture } from 'alsatian';
-import { ClientBuilder } from '../build.client';
+import { Builder } from '../build.functions';
 import * as path from 'path';
 
 @TestFixture('Build client contracts')
@@ -14,7 +14,7 @@ export class ClientTests {
         process.chdir(path.join(__dirname, '..', '..'));// reset the cwd, since it changes when generating cotracts
         console.log(process.cwd());
 
-        await ClientBuilder(path.join(process.cwd(), contract));
+        await Builder(path.join(process.cwd(), contract), true);
         result = true;
 
         Expect(result).toBeTruthy();
@@ -30,7 +30,7 @@ export class ClientTests {
         process.chdir(path.join(__dirname, '..', '..'));// reset the cwd, since it changes when generating cotracts
 
         let result = false;
-        await ClientBuilder();
+        await Builder();
         result = true;
         Expect(result).toBeTruthy();
 

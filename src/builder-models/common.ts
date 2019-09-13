@@ -2,7 +2,7 @@ import { ModelsIndex } from './exportify';
 const PKGJSON = 'package.json';
 import * as path from 'path';
 import { MethodusProject } from '../ast/project';
-import rimraf = require('rimraf');
+import * as rimraf from 'rimraf';
 
 const ROOTSRC = 'src';
 

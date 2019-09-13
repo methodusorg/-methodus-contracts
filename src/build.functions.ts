@@ -1,44 +1,40 @@
-import { Server } from './builder-models/server';
+import { Client } from './builder-models/client';
 import { Configuration, KeysConfiguration } from './builder-models/interfaces';
 import * as path from 'path';
 import * as colors from 'colors';
+import * as rimraf from 'rimraf';
 import { Common } from './builder-models/common';
-import rimraf = require('rimraf');
+
 const Console = console;
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
-export async function ServerBuilder(contract?: string) {
+export async function Builder(contract?: string, isClient: boolean = false) {
+    let buildConfiguration: Configuration | KeysConfiguration;
 
-    let serverBuildConfiguration: Configuration | KeysConfiguration;
-
-    Console.log(colors.blue('> methodus server contract builder.'));
+    Console.log(colors.blue('> methodus client contract builder.'));
     let publish = false;
     if (contract) {
-        serverBuildConfiguration = require(contract) as Configuration;
+        buildConfiguration = require(contract) as Configuration;
     } else {
         const filePath = path.resolve(path.join(process.cwd(), process.argv[2]));
-
-        Console.log(colors.green('> loading server build configuration from:'), filePath);
-        serverBuildConfiguration = require(filePath) as KeysConfiguration;
+        Console.log(colors.green('> loading build configuration from:'), filePath);
+        buildConfiguration = require(filePath) as KeysConfiguration;
 
         publish = process.argv[3] === '-p' || publish;
     }
 
-    if (!serverBuildConfiguration) {
-        throw (new Error('fatal error, no configuration found'));
-
-    }
     const checkList: string[] = [];
-    await build(serverBuildConfiguration, checkList, publish);
+    await build(buildConfiguration, checkList, isClient, publish);
     Console.log(checkList.join('\n'));
-
-    Console.log('completed server build plan, exiting.');
+ 
+    Console.log('completed build plan, exiting.');
     return true;
 }
 
 
-async function singleBuild(configurationItem, destPath, checkList: string[]) {
+
+async function singleBuild(configurationItem, destPath,isClient, checkList: string[]) {
 
     let sourcePath = process.cwd();
     if (!configurationItem.buildPath) {
@@ -53,9 +49,10 @@ async function singleBuild(configurationItem, destPath, checkList: string[]) {
     Console.log(colors.cyan('> target:'), destPath);
     try {
         if (configurationItem !== null) {
-            const builder = new Server(configurationItem,
-                '', sourcePath, destPath);
-            Common.newCommonFlow(configurationItem, '', destPath, sourcePath, false);
+            const builder = new Client(configurationItem,
+                sourcePath, destPath);
+
+            Common.newCommonFlow(configurationItem, '', destPath, sourcePath, isClient);
             return builder;
         }
 
@@ -80,7 +77,6 @@ async function postBuild(destPath, checkList, builder, singleConfiguration, publ
     }
     builder.prune(destPath);
 
-
     if (publish) {
         builder.publish(destPath);
     }
@@ -88,16 +84,17 @@ async function postBuild(destPath, checkList, builder, singleConfiguration, publ
     checkList.push(`${singleConfiguration}: ok`);
 }
 
-async function build(buildConfiguration: any, checkList: string[], publish: boolean) {
+async function build(buildConfiguration: any, checkList: string[], isClient:boolean, publish: boolean) {
     Object.keys(buildConfiguration).forEach(async (singleConfiguration) => {
         const configurationItem = buildConfiguration[singleConfiguration];
         Console.log(colors.green(` > ${singleConfiguration}`));
 
-        const destPath = path.resolve(path.join(configurationItem.buildPath, configurationItem.contractNameServer));
+        const destPath = path.resolve(path.join(configurationItem.buildPath, configurationItem.contractNameClient));
 
-        const builder = await singleBuild(configurationItem, destPath, checkList);
+        const builder = await singleBuild(configurationItem, destPath,isClient, checkList);
 
         await postBuild(destPath, checkList, builder, singleConfiguration, publish);
     });
     return true;
 }
+

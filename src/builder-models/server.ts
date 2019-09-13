@@ -1,17 +1,14 @@
-import { UseTemplate,  UseCustomTemplate } from './exportify';
+import { UseTemplate, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
 import { Configuration } from './interfaces';
 
 import * as path from 'path';
-import { Common } from './common';
 import { MethodusProject } from '../ast/project';
 
 const PKGJSON = 'package.json';
-const ROOTSRC = 'src';
 
 export class Server {
-    //modelify: Modelify;
-    //proxify: Proxify;
+
     Installer: Installer;
     source?: MethodusProject;
     target?: MethodusProject;

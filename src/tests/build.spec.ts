@@ -1,5 +1,5 @@
 import { Expect, Test, TestCase, TestFixture, Timeout, Focus } from 'alsatian';
-import { ServerBuilder } from '../build.server';
+import { Builder } from '../build.functions';
 import * as path from 'path';
 
 
@@ -12,7 +12,7 @@ export class ServerTests {
     @TestCase('/build_vars/inherit/build.json')
     public async testContract(contract) {
         process.chdir(path.join(__dirname, '..', '..'));// reset the cwd, since it changes when generating cotracts
-        const result = await ServerBuilder(path.join(process.cwd(), contract));
+        const result = await Builder(path.join(process.cwd(), contract));
         Expect(result).toBeTruthy();
     }
 
@@ -24,7 +24,7 @@ export class ServerTests {
     public async testArgContract(contract) {
         process.chdir(path.join(__dirname, '..', '..'));// reset the cwd, since it changes when generating cotracts
         process.argv[2] = contract;
-        await ServerBuilder();
+        await Builder();
     }  
 
 }
