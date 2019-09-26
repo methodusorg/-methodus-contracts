@@ -4,7 +4,7 @@ import { UserModel } from '../models/user.model';
 /*start custom*/
 import { DataController } from './datacontroller';
 /*end custom*/
-@MethodConfig('Models', [], UserModel)
-export class Models extends DataController {
+@MethodConfig('ModelsController', [], UserModel)
+export class ModelsController extends DataController {
     
 }

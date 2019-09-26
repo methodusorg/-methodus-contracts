@@ -1,4 +1,5 @@
 import * as shelljs from 'shelljs';
+import * as exec from 'shelljs.exec';
 const LINE = '----------------------------------------------------------------------';
 const Console = console;
 export class Installer {
@@ -7,58 +8,74 @@ export class Installer {
         this.shell = shelljs;
     }
 
+
+    public prune(destFolder) {
+        this.shell.cd(destFolder);
+        let commandStr = 'npm install --production --ignore-scripts';
+        if (process.env.YARN) {
+            commandStr = 'yarn install --production --ignore-scripts';
+        }
+
+        const intsallResult = exec(commandStr).code;
+        Console.log(LINE);
+        Console.log('Completed prune: ' + (intsallResult === 0));
+        if (intsallResult !== 0) {
+            throw (new Error('install error'));
+        }
+
+    }
+
+    public compile(destFolder) {
+        this.shell.cd(destFolder);
+        const execRes = exec('npm run compile');
+        const compileResult = execRes.code;
+        if(execRes.stderr){
+            console.warn('error', execRes.stderr);
+        }
+        Console.log('Compiled generated code: ' + (compileResult === 0));
+
+        if (compileResult !== 0) {
+            throw(new Error(execRes.stderr));
+        }
+    }
+
+
     public build(destFolder) {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
-        try {
-            const intsallResult = this.shell.exec('npm install').code;
-            Console.log(LINE);
-            Console.log('Completed npm install: ' + (intsallResult === 0));
-            if (intsallResult !== 0) {
-                throw (new Error('npm error'));
-            }
 
-            const deleteBuildResult = this.shell.exec('rm -rf ./build').code;
-            Console.log('Deleted build folder: ' + (deleteBuildResult === 0));
-
-
-            const compileResult = this.shell.exec('tsc').code;
-            Console.log('Compiled generated code: ' + (compileResult === 0));
-
-            if (compileResult !== 0) {
-                console.error('tsc Error', compileResult);
-            }
-
-
-
-            const deleteSrcResult = this.shell.exec('rm -rf ./src').code;
-            Console.log('Deleted src folder: ' + (deleteSrcResult === 0));
-            Console.log(LINE);
-
-            if (deleteSrcResult !== 0) {
-                console.error('delete Error');
-            }
-
-            const prodInstallResult = this.shell.exec('npm prune --production').code;
-            Console.log(LINE);
-            Console.log('Shaking devDependencies: ' + (prodInstallResult === 0));
-            if (prodInstallResult !== 0) {
-                throw (new Error('npm error'));
-            }
-        } catch (error) {
-            this.shell.cd(cwd);
-            throw (error);
-        } finally {
-            this.shell.cd(cwd);
+        let commandStr = 'npm install';
+        if (process.env.YARN) {
+            commandStr = 'yarn install';
         }
+
+        const intsallResult = exec(commandStr).code;
+        Console.log(LINE);
+        Console.log('Completed yarn install: ' + (intsallResult === 0));
+        if (intsallResult !== 0) {
+            throw (new Error('yarn error'));
+        }
+        this.shell.cd(cwd);
+         
     }
 
     public link(destFolder) {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
-        this.shell.exec('npm unlink');
+        let commandStr = 'npm unlink';
+        if (process.env.YARN) {
+            commandStr = 'yarn unlink';
+        }
 
-        if (this.shell.exec('npm link').code !== 0) {
+
+       exec(commandStr);
+
+        commandStr = 'npm link';
+        if (process.env.YARN) {
+            commandStr = 'yarn link';
+        }
+
+        if (exec(commandStr).code !== 0) {
             this.shell.cd(cwd);
             throw (new Error('could not link contract'));
         }
@@ -69,7 +86,13 @@ export class Installer {
     public publish(destFolder) {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
-        if (this.shell.exec('npm publish').code !== 0) {
+
+        let commandStr = 'npm publish';
+        if (process.env.YARN) {
+            commandStr = 'yarn publish';
+        }
+
+        if (exec(commandStr).code !== 0) {
             this.shell.cd(cwd);
             throw (new Error('could not publish contract'));
         }

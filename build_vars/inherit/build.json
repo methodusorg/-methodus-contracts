@@ -1,7 +1,7 @@
 {
     "inherit": {
-        "contractNameServer": "@server/inherit",
-        "contractNameClient": "@client/inherit",
+        "contractNameServer": "@server-contracts/inherit",
+        "contractNameClient": "@client-contracts/inherit",
         "buildPath": "./build_path/",
         "path": "build_vars/inherit",
         "models": {

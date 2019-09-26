@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-process.env.NODE_LOG_SILENT = 'true';
-import { ServerBuilder } from './build.server';
+import { Builder } from './build.functions';
 const logger = console;
 (async () => {
     try {
-        await ServerBuilder();
+        await Builder('', false);
     } catch (error) {
         logger.error(error);
     } finally {
