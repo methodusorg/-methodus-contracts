@@ -4,13 +4,13 @@
     "description": "",
     "main": "build/index",
     "scripts": {
-        "build": "tsc",
+        "compile": "node_modules/typescript/bin/tsc",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@methodus/client": "~3.0.1",
+        "@methodus/client": "latest",
         "@types/node": "^7.0.31",
         "typescript": "^3.6.3"
     },

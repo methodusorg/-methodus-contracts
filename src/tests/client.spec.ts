@@ -1,4 +1,4 @@
-import { Expect, Test, TestCase, TestFixture } from 'alsatian';
+import { Expect, Test, TestCase, TestFixture, Focus } from 'alsatian';
 import { Builder } from '../build.functions';
 import * as path from 'path';
 

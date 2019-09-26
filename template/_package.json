@@ -3,8 +3,9 @@
     "version": "{version}",
     "description": "",
     "main": "build/index",
-    "scripts": {        
-        "test": "echo \"Error: no test specified\" && exit 1"
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "compile": "node_modules/typescript/bin/tsc"
     },
     "author": "",
     "license": "ISC",

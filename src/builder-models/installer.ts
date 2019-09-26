@@ -1,5 +1,5 @@
 import * as shelljs from 'shelljs';
-
+import * as exec from 'shelljs.exec';
 const LINE = '----------------------------------------------------------------------';
 const Console = console;
 export class Installer {
@@ -16,7 +16,7 @@ export class Installer {
             commandStr = 'yarn install --production --ignore-scripts';
         }
 
-        const intsallResult = this.shell.exec(commandStr).code;
+        const intsallResult = exec(commandStr).code;
         Console.log(LINE);
         Console.log('Completed prune: ' + (intsallResult === 0));
         if (intsallResult !== 0) {
@@ -27,12 +27,15 @@ export class Installer {
 
     public compile(destFolder) {
         this.shell.cd(destFolder);
-        const execRes = this.shell.exec('tsc -p tsconfig.json');
+        const execRes = exec('npm run compile');
         const compileResult = execRes.code;
+        if(execRes.stderr){
+            console.warn('error', execRes.stderr);
+        }
         Console.log('Compiled generated code: ' + (compileResult === 0));
 
         if (compileResult !== 0) {
-            console.error('tsc Error', compileResult);
+            throw(new Error(execRes.stderr));
         }
     }
 
@@ -46,7 +49,7 @@ export class Installer {
             commandStr = 'yarn install';
         }
 
-        const intsallResult = this.shell.exec(commandStr).code;
+        const intsallResult = exec(commandStr).code;
         Console.log(LINE);
         Console.log('Completed yarn install: ' + (intsallResult === 0));
         if (intsallResult !== 0) {
@@ -65,14 +68,14 @@ export class Installer {
         }
 
 
-        this.shell.exec(commandStr);
+       exec(commandStr);
 
         commandStr = 'npm link';
         if (process.env.YARN) {
             commandStr = 'yarn link';
         }
 
-        if (this.shell.exec(commandStr).code !== 0) {
+        if (exec(commandStr).code !== 0) {
             this.shell.cd(cwd);
             throw (new Error('could not link contract'));
         }
@@ -89,7 +92,7 @@ export class Installer {
             commandStr = 'yarn publish';
         }
 
-        if (this.shell.exec(commandStr).code !== 0) {
+        if (exec(commandStr).code !== 0) {
             this.shell.cd(cwd);
             throw (new Error('could not publish contract'));
         }

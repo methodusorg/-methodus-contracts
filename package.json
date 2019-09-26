@@ -1,6 +1,6 @@
 {
     "name": "@methodus/contracts",
-    "version": "4.1.6",
+    "version": "5.0.0",
     "description": "",
     "main": "build/index.js",
     "bin": {
@@ -12,7 +12,7 @@
         "tslint": "tslint --project",
         "test": "npm run check-coverage",
         "check-coverage": "npm run test:tests",
-        "test:tests": "trash output && nyc --reporter=lcov --reporter=html --reporter=text alsatian build/tests/*.spec.js",
+        "test:tests": "trash output && alsatian build/tests/*.spec.js",
         "test:server": "run-s test:server:* ",
         "test:server:simple": "node build/build.js ./build_vars/simple/build.json",
         "test:server:models": "node build/build.js ./build_vars/models/build.json",
@@ -25,7 +25,7 @@
         "pretest": "tsc",
         "sonar": "sonar-scanner.bat -Dsonar.projectKey=nodulusteam_-methodus-contracts -Dsonar.organization=nodulusteam-github -Dsonar.sources=. -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=e01e7adc2647251c0651a3bab28de27b479b4432"
     },
-    "author": "",
+    "author": "@nodulusteam",
     "license": "BSD-3-Clause",
     "nyc": {
         "extends": "@istanbuljs/nyc-config-typescript",
@@ -60,7 +60,7 @@
         "logelas": "^4.1.3",
         "rimraf": "^3.0.0",
         "shelljs": "^0.7.8",
-      
+        "shelljs.exec": "^1.1.8",
         "trash-cli": "^3.0.0",
         "ts-morph": "^4.0.0"
     }

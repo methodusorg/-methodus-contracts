@@ -29,7 +29,7 @@ export class Common {
             Object.keys(configuration.contracts).forEach((contractKey) => {
                 const contract = configuration.contracts[contractKey];
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, contract.path));
-                targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase());
+                targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase(), isClient);
             });
         }
 
@@ -37,13 +37,22 @@ export class Common {
             Object.keys(configuration.includes).forEach((includeKey) => {
                 const include = configuration.includes[includeKey];
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, include.path));
-                targetProject.HandleIncludeFile(sourceFile, 'includes');
+                targetProject.HandleIncludeFile(sourceFile, 'includes', isClient);
             });
         }
 
         targetProject.Exportify(configuration, target, packageName, isClient);
         targetProject.project.getSourceFiles().forEach((finalFile) => {
             finalFile.fixMissingImports();
+
+            finalFile.getImportDeclarations().forEach((importDec) => {
+                const children = importDec.getChildren();
+
+                if (children.length === 3) {
+                    importDec.remove();
+                }
+
+            });
             finalFile.saveSync();
         });
     }

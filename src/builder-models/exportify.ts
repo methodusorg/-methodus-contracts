@@ -2,6 +2,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as shell from 'shelljs';
+
 import * as colors from 'colors';
 import { HEADER, Configuration } from './interfaces';
 const ROOTSRC = 'src';

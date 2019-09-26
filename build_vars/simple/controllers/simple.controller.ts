@@ -16,7 +16,7 @@ export class Simple {
     }
 
     @Method(Verbs.Post, '/simple/post')
-    public static async post(@Param('id') id: string): Promise<MethodResult<any>> {
+    public static async post(@Param('id') id: string): Promise<MethodResult> {
         return new MethodResult({ Name: 'roi' });
     }
 }

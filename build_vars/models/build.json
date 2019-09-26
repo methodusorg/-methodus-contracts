@@ -1,7 +1,7 @@
 {
     "models": {
-        "contractNameServer": "@server/models",
-        "contractNameClient": "@client/models",
+        "contractNameServer": "@server-contracts/models",
+        "contractNameClient": "@client-contracts/models",
         "buildPath": "./build_path/",
         "path": "build_vars/models",
         "buildFolder": "./",
