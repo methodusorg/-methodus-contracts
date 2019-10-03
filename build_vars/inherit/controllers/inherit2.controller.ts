@@ -5,7 +5,6 @@ import { BaseController } from './basecontroller';
 /*end custom*/
 
 @MethodConfig('Inherit2')
-@MethodConfigExtend(BaseController)
 export class Inherit2 extends BaseController {
 
 }

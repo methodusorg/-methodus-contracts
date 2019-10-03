@@ -48,11 +48,21 @@ export class MethodusProject {
     }
 
     HandleMethod(method, isClient: boolean = false) {
-
+        let isMocked = false;
         if (isClient) {
             method.getDecorators().forEach((decoratorRef) => {
                 if (decoratorRef.getName() === 'MethodMock') {
+                    const mockResult = decoratorRef.getStructure().arguments[0];
                     decoratorRef.remove();
+                    method.getStatements().forEach((statement) => {
+                        statement.remove();
+                    });
+
+                    const argsRow = method.getStructure().parameters.map((argument) => {
+                        return argument.name;
+                    }).join(',');
+                    method.setBodyText(writer => writer.writeLine(`return  ${mockResult}.apply(this, [${argsRow}]);`));
+                    isMocked = true;
                 }
             });
         }
@@ -118,10 +128,11 @@ export class MethodusProject {
         });
 
 
-
-        method.getStatements().forEach((statement) => {
-            statement.remove();
-        });
+        if (!isMocked) {
+            method.getStatements().forEach((statement) => {
+                statement.remove();
+            });
+        }
         if (method.getReturnTypeNode()) {
             let retType = method.getReturnTypeNode().getText()
             if (retType.indexOf('Promise<') > -1) {
@@ -144,12 +155,11 @@ export class MethodusProject {
             }
 
 
+            if (!isMocked) {
+                const returnStr = `        return null! as ${retType};\n    `
+                method.insertText(method.getBody().getEnd() - 1, returnStr);
+            }
 
-            let returnStr = `        return null! as ${retType};\n    `
-            // if (isClient) {
-            //     returnStr = `        return new M.${retType}(null!);\n    `;
-            // }
-            method.insertText(method.getBody().getEnd() - 1, returnStr);
         } else {
 
         }

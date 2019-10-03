@@ -1,6 +1,6 @@
 {
     "name": "@methodus/contracts",
-    "version": "5.0.0",
+    "version": "5.0.2",
     "description": "",
     "main": "build/index.js",
     "bin": {
@@ -43,8 +43,8 @@
         "check-coverage": false
     },
     "devDependencies": {
-        "@methodus/client": "latest",
-        "@methodus/server": "^3.1.1",
+        "@methodus/client": "^3.1.0",
+        "@methodus/server": "^4.0.0",
         "@types/lodash": "^4.14.75",
         "@types/node": "^8.0.31",
         "alsatian": "^3.0.1",

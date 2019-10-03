@@ -137,6 +137,8 @@
             "outFiles": [],
             "sourceMaps": true,
             "env": {
+               
+               
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }

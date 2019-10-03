@@ -6,7 +6,7 @@ import { Mock } from '../';
 export class BaseController {
     @MethodMock(Mock.simple)
     @Method(Verbs.Get, '/simple/get')
-    public static async get(@Param('id') id: string): Promise<MethodResult> {
+    public async get(@Param('id') id: string): Promise<MethodResult> {
         return new MethodResult({});
     }
 }
