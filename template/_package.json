@@ -5,14 +5,14 @@
     "main": "build/index",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "compile": "node_modules/typescript/bin/tsc"
+        "compile": "tsc"
     },
     "author": "",
     "license": "ISC",
     "devDependencies": {
         "@methodus/server": "latest",
         "@types/node": "^8.0.0",
-        "typescript": "^3.6.3"
+        "typescript": "^3.5.3"
     },
     "dependencies": {}
 }

@@ -51,11 +51,11 @@ export class Installer {
             commandName = 'yarn';
         }
 
-        const intsallResult = exec(commandStr).code;
+        const intsallResult = exec(commandStr);
         Console.log(LINE);
-        Console.log(`Completed ${commandName} install: ` + (intsallResult === 0));
-        if (intsallResult !== 0) {
-            throw (new Error(`${commandName} error`));
+        Console.log(`Completed ${commandName} install: ` + (intsallResult.code === 0));
+        if (intsallResult.code !== 0) {
+            throw (new Error(`${commandName} error ${intsallResult.stderr}`));
         }
         this.shell.cd(cwd);
 
