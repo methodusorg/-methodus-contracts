@@ -4,7 +4,6 @@ import { Mock } from '../../../build_mocks/mock';
 import { BaseController } from './basecontroller';
 /*end custom*/
 @MethodConfig('Inherit')
-@MethodConfigExtend(BaseController)
 export class Inherit extends BaseController {
 
 }

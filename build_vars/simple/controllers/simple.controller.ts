@@ -5,9 +5,9 @@ import { Method, MethodConfig, MethodResult, Verbs, Param, MethodMock, SecurityC
 
 @MethodConfig('Simple')
 export class Simple {
-    //@MethodMock(Mock.simple)
+   // @MethodMock(Mock.simple)
     @Method(Verbs.Get, '/simple/get')
-    public static async get(@Param('id') id: string, @SecurityContext() user: any): Promise<MethodResult<any>> {
+    public  async get(@Param('id') id: string, @SecurityContext() user: any): Promise<MethodResult<any>> {
         // some comments
         let x = 1 + 1;
         let b = x * 10;
@@ -16,7 +16,7 @@ export class Simple {
     }
 
     @Method(Verbs.Post, '/simple/post')
-    public static async post(@Param('id') id: string): Promise<MethodResult> {
+    public  async post(@Param('id') id: string): Promise<MethodResult> {
         return new MethodResult({ Name: 'roi' });
     }
 }

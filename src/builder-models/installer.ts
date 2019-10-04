@@ -11,7 +11,7 @@ export class Installer {
 
     public prune(destFolder) {
         this.shell.cd(destFolder);
-        let commandStr = 'npm install --production --ignore-scripts';
+        let commandStr = 'npm install --production --ignore-scripts --no-package-lock';
         if (process.env.YARN) {
             commandStr = 'yarn install --production --ignore-scripts';
         }
@@ -29,13 +29,13 @@ export class Installer {
         this.shell.cd(destFolder);
         const execRes = exec('npm run compile');
         const compileResult = execRes.code;
-        if(execRes.stderr){
+        if (execRes.stderr) {
             console.warn('error', execRes.stderr);
         }
         Console.log('Compiled generated code: ' + (compileResult === 0));
 
         if (compileResult !== 0) {
-            throw(new Error(execRes.stderr));
+            throw (new Error(execRes.stderr));
         }
     }
 
@@ -44,19 +44,21 @@ export class Installer {
         const cwd = process.cwd();
         this.shell.cd(destFolder);
 
-        let commandStr = 'npm install';
+        let commandName = 'npm';
+        let commandStr = 'npm install --no-package-lock';
         if (process.env.YARN) {
             commandStr = 'yarn install';
+            commandName = 'yarn';
         }
 
-        const intsallResult = exec(commandStr).code;
+        const intsallResult = exec(commandStr);
         Console.log(LINE);
-        Console.log('Completed yarn install: ' + (intsallResult === 0));
-        if (intsallResult !== 0) {
-            throw (new Error('yarn error'));
+        Console.log(`Completed ${commandName} install: ` + (intsallResult.code === 0));
+        if (intsallResult.code !== 0) {
+            throw (new Error(`${commandName} error ${intsallResult.stderr}`));
         }
         this.shell.cd(cwd);
-         
+
     }
 
     public link(destFolder) {
@@ -68,7 +70,7 @@ export class Installer {
         }
 
 
-       exec(commandStr);
+        exec(commandStr);
 
         commandStr = 'npm link';
         if (process.env.YARN) {
