@@ -16,8 +16,8 @@ const HTTP = 'Http';
 import { Inherit, Inherit2 } from '@server/inherit';
 
 @ServerConfiguration(ServerType.Express, { port: process.env.PORT || 6690 })
-@ClientConfiguration(Inherit, MethodType.Http, ServerType.Express, URL)
-@ClientConfiguration(Inherit2, MethodType.Http, ServerType.Express, URL)
+@ClientConfiguration(Inherit, MethodType.Http, URL)
+@ClientConfiguration(Inherit2, MethodType.Http, URL)
 // @PluginConfiguration('@methodus/describe')
 class SetupServer extends ConfiguredServer {
     constructor() {

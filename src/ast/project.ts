@@ -49,23 +49,8 @@ export class MethodusProject {
 
     HandleMethod(method, isClient: boolean = false) {
         let isMocked = false;
-        if (isClient) {
-            method.getDecorators().forEach((decoratorRef) => {
-                if (decoratorRef.getName() === 'MethodMock') {
-                    const mockResult = decoratorRef.getStructure().arguments[0];
-                    decoratorRef.remove();
-                    method.getStatements().forEach((statement) => {
-                        statement.remove();
-                    });
 
-                    const argsRow = method.getStructure().parameters.map((argument) => {
-                        return argument.name;
-                    }).join(',');
-                    method.setBodyText(writer => writer.writeLine(`return  ${mockResult}.apply(this, [${argsRow}]);`));
-                    isMocked = true;
-                }
-            });
-        }
+
 
         method.getDecorators().forEach((decoratorRef) => {
 
@@ -106,9 +91,6 @@ export class MethodusProject {
 
 
 
-
-
-
         const xparams = method.getParameters();
 
         xparams.forEach((arg, i) => {
@@ -122,10 +104,28 @@ export class MethodusProject {
                     }
                 }
             }
-
-
-
         });
+
+
+        if (isClient) {
+            method.getDecorators().forEach((decoratorRef) => {
+                if (decoratorRef.getName() === 'MethodMock') {
+                    const mockResult = decoratorRef.getStructure().arguments[0];
+                    decoratorRef.remove();
+                    method.getStatements().forEach((statement) => {
+                        statement.remove();
+                    });
+                    const params = method.getStructure().parameters;
+                    const argsRow = params.map((argument) => {
+                        return argument.name;
+                    }).join(',');
+                    method.setBodyText(writer => writer.writeLine(`return  ${mockResult}.apply(this, [${argsRow}]);`));
+                    isMocked = true;
+                }
+            });
+        }
+
+
 
 
         if (!isMocked) {
