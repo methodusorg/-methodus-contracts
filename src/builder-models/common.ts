@@ -1,4 +1,4 @@
-import { ModelsIndex } from './exportify';
+import { ModelsIndex, ContractsIndex } from './exportify';
 const PKGJSON = 'package.json';
 import * as path from 'path';
 import { MethodusProject } from '../ast/project';
@@ -31,6 +31,7 @@ export class Common {
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, contract.path));
                 targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase(), isClient);
             });
+            ContractsIndex(configuration, source, path.join(target, ROOTSRC, 'contracts'), packageName);
         }
 
         if (configuration.includes) {

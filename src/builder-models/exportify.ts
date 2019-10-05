@@ -28,6 +28,24 @@ export function ModelsIndex(buildConfiguration: Configuration, source: string, t
     fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
 }
 
+
+export function ContractsIndex(buildConfiguration: Configuration, source: string, target: string, packageName: string) {
+
+    const head = `/**/\n`;
+    let body = '';
+
+    if (buildConfiguration.contracts) {
+        Object.keys(buildConfiguration.contracts).forEach((contractKey: string) => {
+           
+            body += `export * from './${contractKey.toLocaleLowerCase()}';\n`;
+        });
+    }
+
+    shell.mkdir('-p', target);
+    fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
+}
+
+
 export function UseTemplate(fileName, targetFileName, destFolder, replacement?) {
     let content = fs.readFileSync(path.resolve(path.join(__dirname, '../../template', fileName)), 'utf-8');
     if (replacement) {

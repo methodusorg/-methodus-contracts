@@ -307,6 +307,10 @@ export class MethodusProject {
 
 
         const classes = file.getClasses();
+        if (!classes[0]) {
+            console.log(`file ${file.getFilePath()} doesn't contain a class model`);
+            return;
+        }
         const classDec = createWrappedNode(classes[0].compilerNode) as ClassDeclaration;
         const modelClass = sourceFile.addClass(classDec.getStructure());
 
@@ -335,24 +339,28 @@ export class MethodusProject {
         target: string, packageName: string, isClient = false) {
         const indexPath = path.join(this.projectPath, 'src', 'index.ts');
         const indexFile = this.project.createSourceFile(indexPath, undefined, { overwrite: true });
-        if (buildConfiguration.contracts) {
-            const contracts = Object.assign({}, buildConfiguration.contracts);
-            Object.keys(contracts).forEach((contractsKey: string) => {
-                indexFile.addExportDeclaration({
-                    moduleSpecifier: `./contracts/${contractsKey.toLocaleLowerCase()}`,
-                    namedExports: [contractsKey]
-                });
-            });
-        }
 
-        if (buildConfiguration.models) {
-            Object.keys(buildConfiguration.models).forEach((modelKey: string) => {
+        ['models', 'includes', 'contracts'].forEach((name) => {
+            if (buildConfiguration[name]) {
                 indexFile.addExportDeclaration({
-                    moduleSpecifier: `./models/${modelKey.toLocaleLowerCase()}`,
-                    namedExports: [modelKey]
+                    moduleSpecifier: `./${name}/`,
+
                 });
-            });
-        }
+            }
+        });
+
+
+
+        // if (buildConfiguration.contracts) {
+        //     const contracts = Object.assign({}, buildConfiguration.contracts);
+        //     Object.keys(contracts).forEach((contractsKey: string) => {
+        //         indexFile.addExportDeclaration({
+        //             moduleSpecifier: `./contracts/${contractsKey.toLocaleLowerCase()}`,
+        //             namedExports: [contractsKey]
+        //         });
+        //     });
+        // }
+
 
         indexFile.saveSync();
         return indexFile;
