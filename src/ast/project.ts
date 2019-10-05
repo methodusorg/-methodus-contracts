@@ -341,7 +341,7 @@ export class MethodusProject {
         const indexFile = this.project.createSourceFile(indexPath, undefined, { overwrite: true });
 
         ['models', 'includes', 'contracts'].forEach((name) => {
-            if (buildConfiguration[name]) {
+            if (buildConfiguration[name] && Object.keys(buildConfiguration[name]).length > 0) {
                 indexFile.addExportDeclaration({
                     moduleSpecifier: `./${name}/`,
 

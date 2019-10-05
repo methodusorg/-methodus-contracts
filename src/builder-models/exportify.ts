@@ -45,6 +45,22 @@ export function ContractsIndex(buildConfiguration: Configuration, source: string
     fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
 }
 
+export function IncludesIndex(buildConfiguration: Configuration, source: string, target: string, packageName: string) {
+
+    const head = `/**/\n`;
+    let body = '';
+
+    if (buildConfiguration.includes) {
+        Object.keys(buildConfiguration.includes).forEach((contractKey: string) => {
+           
+            body += `export * from './${contractKey.toLocaleLowerCase()}';\n`;
+        });
+    }
+
+    shell.mkdir('-p', target);
+    fs.writeFileSync(path.join(target, 'index.ts'), `${HEADER}${head}${body}\n`);
+}
+
 
 export function UseTemplate(fileName, targetFileName, destFolder, replacement?) {
     let content = fs.readFileSync(path.resolve(path.join(__dirname, '../../template', fileName)), 'utf-8');

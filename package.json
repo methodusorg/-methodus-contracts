@@ -8,11 +8,11 @@
         "contracts-client": "build/client.js"
     },
     "scripts": {
-        "build": "trash build && tsc",
+        "build": "rimraf build && tsc",
         "tslint": "tslint --project",
         "test": "npm run check-coverage",
         "check-coverage": "npm run test:tests",
-        "test:tests": "trash output && alsatian build/tests/*.spec.js",
+        "test:tests": "rimraf output && alsatian build/tests/*.spec.js",
         "test:server": "run-s test:server:* ",
         "test:server:simple": "node build/build.js ./build_vars/simple/build.json",
         "test:server:models": "node build/build.js ./build_vars/models/build.json",
@@ -61,7 +61,7 @@
         "rimraf": "^3.0.0",
         "shelljs": "^0.7.8",
         "shelljs.exec": "^1.1.8",
-        "trash-cli": "^3.0.0",
+     
         "ts-morph": "^4.0.0"
     }
 }

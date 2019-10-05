@@ -1,5 +1,8 @@
 import * as shelljs from 'shelljs';
 import * as exec from 'shelljs.exec';
+import * as rimraf from 'rimraf';
+import * as path from 'path';
+
 const LINE = '----------------------------------------------------------------------';
 const Console = console;
 export class Installer {
@@ -27,6 +30,7 @@ export class Installer {
 
     public compile(destFolder) {
         this.shell.cd(destFolder);
+        rimraf.sync(path.join(destFolder, 'build'));
         const execRes = exec('npm run compile');
         const compileResult = execRes.code;
         if (execRes.stderr) {
