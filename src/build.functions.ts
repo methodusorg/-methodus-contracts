@@ -47,6 +47,10 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
     }
 
     Console.log(colors.cyan('> source:'), sourcePath);
+
+    //delete the src folder
+    rimraf.sync(path.join(destPath, 'src'));
+
     Console.log(colors.cyan('> target:'), destPath);
     try {
         if (configurationItem !== null) {

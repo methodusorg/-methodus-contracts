@@ -2,6 +2,7 @@ import { ModelsIndex, ContractsIndex, IncludesIndex } from './exportify';
 import * as path from 'path';
 import { MethodusProject } from '../ast/project';
 import * as rimraf from 'rimraf';
+import { FormatCodeSettings, UserPreferences } from 'ts-morph';
 
 const ROOTSRC = 'src';
 
@@ -20,17 +21,17 @@ export class Common {
                 const modelFile = sourceProject.project.addExistingSourceFile(path.join(source, model.path));
                 targetProject.ProxifyFromModel(modelFile, 'models', modelKey.toLocaleLowerCase());
             });
-            ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
+            //ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
         }
 
-``
+        ``
         if (configuration.contracts) {
             Object.keys(configuration.contracts).forEach((contractKey) => {
                 const contract = configuration.contracts[contractKey];
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, contract.path));
                 targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase(), isClient);
             });
-            ContractsIndex(configuration, source, path.join(target, ROOTSRC, 'contracts'), packageName);
+            // ContractsIndex(configuration, source, path.join(target, ROOTSRC, 'contracts'), packageName);
         }
 
         if (configuration.includes) {
@@ -39,12 +40,22 @@ export class Common {
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, include.path));
                 targetProject.HandleIncludeFile(sourceFile, 'includes', isClient);
             });
-            IncludesIndex(configuration, source, path.join(target, ROOTSRC, 'includes'), packageName);
+            //  IncludesIndex(configuration, source, path.join(target, ROOTSRC, 'includes'), packageName);
         }
 
-        targetProject.Exportify(configuration, target, packageName, isClient);
+        const format: FormatCodeSettings = {
+
+        }
+
+        const prefernces: UserPreferences = {
+            importModuleSpecifierPreference: "non-relative"
+        }
+
+
+
+
         targetProject.project.getSourceFiles().forEach((finalFile) => {
-            finalFile.fixMissingImports();
+            finalFile.fixMissingImports(format, prefernces);
 
             finalFile.getImportDeclarations().forEach((importDec) => {
                 const children = importDec.getChildren();
@@ -56,5 +67,20 @@ export class Common {
             });
             finalFile.saveSync();
         });
+
+        if (configuration.includes) {
+            IncludesIndex(configuration, source, path.join(target, ROOTSRC, 'includes'), packageName);
+        }
+
+        if (configuration.contracts) {
+            ContractsIndex(configuration, source, path.join(target, ROOTSRC, 'contracts'), packageName);
+        }
+
+        if (configuration.models && Object.keys(configuration.models).length > 0) {
+
+            ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
+        }
+        targetProject.Exportify(configuration, target, packageName, isClient);
+
     }
 }

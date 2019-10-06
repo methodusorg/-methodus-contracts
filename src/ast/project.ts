@@ -197,13 +197,9 @@ export class MethodusProject {
         const sourceFile = this.project.createSourceFile(path.join(basePath, `${contractKey}.ts`), undefined, { overwrite: true });
         sourceFile.insertText(0, writer => writer.writeLine(HEADER));
 
-
-
         const classes = file.getClasses();
         if (classes) {
-
             if (!isClient) {
-
 
                 sourceFile.addImportDeclaration({
                     moduleSpecifier: '@methodus/server',
