@@ -169,6 +169,7 @@ export class MethodusProject {
 
     }
 
+   
     HandleIncludeFile(sourceFile, dirName: string, isClient: boolean = false) {
         const basePath = path.join(this.projectPath, 'src', 'includes');
         this.project.createDirectory(basePath);
@@ -194,7 +195,7 @@ export class MethodusProject {
         this.project.saveSync();
 
         // create the file
-        const sourceFile = this.project.createSourceFile(path.join(basePath, `${contractKey}.ts`), undefined, { overwrite: true });
+        const sourceFile = this.project.createSourceFile(path.join(basePath, `${file.getBaseName()}`), undefined, { overwrite: true });
         sourceFile.insertText(0, writer => writer.writeLine(HEADER));
 
         const classes = file.getClasses();
@@ -297,8 +298,9 @@ export class MethodusProject {
         this.project.createDirectory(basePath);
         this.project.saveSync();
 
+
         // create the file
-        const sourceFile = this.project.createSourceFile(path.join(basePath, `${modelKey}.ts`), undefined, { overwrite: true });
+        const sourceFile = this.project.createSourceFile(path.join(basePath, `${file.getBaseName()}`), undefined, { overwrite: true });
         sourceFile.insertText(0, writer => writer.writeLine(HEADER));
 
 

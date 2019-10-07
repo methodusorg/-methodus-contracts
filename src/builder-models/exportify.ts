@@ -15,12 +15,12 @@ export function ModelsIndex(buildConfiguration: Configuration, source: string, t
 
     if (buildConfiguration.models) {
         Object.keys(buildConfiguration.models).forEach((modelKey: string) => {
-
             let cleanKey = modelKey;
             if (!cleanKey.endsWith('Model')) {
                 cleanKey = cleanKey + 'Model';
             }
-            body += `export {${modelKey} as ${cleanKey}} from './${modelKey.toLocaleLowerCase()}';\n`;
+            let fullPath = path.basename(buildConfiguration.models[modelKey].path, '.ts');
+            body += `export {${modelKey} as ${cleanKey}} from './${fullPath}';\n`;
         });
     }
 
@@ -36,8 +36,8 @@ export function ContractsIndex(buildConfiguration: Configuration, source: string
 
     if (buildConfiguration.contracts) {
         Object.keys(buildConfiguration.contracts).forEach((contractKey: string) => {
-           
-            body += `export * from './${contractKey.toLocaleLowerCase()}';\n`;
+            let fullPath = path.basename(buildConfiguration.contracts[contractKey].path, '.ts');
+            body += `export * from './${fullPath}';\n`;
         });
     }
 
@@ -52,8 +52,8 @@ export function IncludesIndex(buildConfiguration: Configuration, source: string,
 
     if (buildConfiguration.includes) {
         Object.keys(buildConfiguration.includes).forEach((contractKey: string) => {
-           
-            body += `export * from './${contractKey.toLocaleLowerCase()}';\n`;
+            let fullPath = path.basename(buildConfiguration.includes[contractKey].path, '.ts');
+            body += `export * from './${fullPath}';\n`;
         });
     }
 
