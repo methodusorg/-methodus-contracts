@@ -1,9 +1,10 @@
-import { Project, ScriptTarget, createWrappedNode, ClassDeclaration, TypeFormatFlags, IndentationText, NewLineKind, QuoteKind, Decorator, MethodDeclaration, ConstructorDeclaration } from 'ts-morph';
+import {
+    Project, ScriptTarget, createWrappedNode, ClassDeclaration, TypeFormatFlags, IndentationText, NewLineKind, QuoteKind,
+    Decorator, MethodDeclaration, ConstructorDeclaration,
+    FormatCodeSettings, UserPreferences, SourceFile
+} from 'ts-morph';
 import * as path from 'path';
 import { HEADER, Configuration } from '../builder-models/interfaces';
-
-
-
 
 
 export class MethodusProject {
@@ -169,7 +170,7 @@ export class MethodusProject {
 
     }
 
-   
+
     HandleIncludeFile(sourceFile, dirName: string, isClient: boolean = false) {
         const basePath = path.join(this.projectPath, 'src', 'includes');
         this.project.createDirectory(basePath);
@@ -301,7 +302,7 @@ export class MethodusProject {
 
         // create the file
         const sourceFile = this.project.createSourceFile(path.join(basePath, `${file.getBaseName()}`), undefined, { overwrite: true });
-        sourceFile.insertText(0, writer => writer.writeLine(HEADER));
+        //sourceFile.insertText(0, writer => writer.writeLine(HEADER));
 
 
         const classes = file.getClasses();
@@ -328,13 +329,29 @@ export class MethodusProject {
             decorator.remove();
         });
 
-        sourceFile.saveSync();
+
+        const format: FormatCodeSettings = {
+
+        }
+
+        const prefernces: UserPreferences = {
+            importModuleSpecifierPreference: "non-relative"
+        }
+
+        try {
+
+            sourceFile.fixMissingImports(format, prefernces);
+            sourceFile.saveSync();
+        } catch (error) {
+            console.log(file.getFilePath());
+            console.error(error);
+        }
     }
 
 
 
     Exportify(buildConfiguration: Configuration,
-        target: string, packageName: string, isClient = false) {
+        target: string, packageName: string, isClient = false): SourceFile {
         const indexPath = path.join(this.projectPath, 'src', 'index.ts');
         const indexFile = this.project.createSourceFile(indexPath, undefined, { overwrite: true });
 
