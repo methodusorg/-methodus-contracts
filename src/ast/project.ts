@@ -12,7 +12,6 @@ export class MethodusProject {
     sourceFiles: any[];
 
     constructor(public projectPath: string, public packageName: string) {
-        console.log('project path', projectPath);
         this.project = new Project({
             manipulationSettings: {
                 // TwoSpaces, FourSpaces, EightSpaces, or Tab
@@ -35,17 +34,17 @@ export class MethodusProject {
     }
 
     HandleConstructor(constructor, isClient: boolean = false) {
-
         if (isClient) {
             constructor.getParameters().forEach((param) => {
                 const decorators = param.getDecorators();
-                const decoratorRef = decorators[0];
-                if (decoratorRef.getText().indexOf('@M.') !== 0) {
-                    decoratorRef.replaceWithText(`@M.${decoratorRef.getText().substr(1)}`)
+                if (decorators.length) {
+                    const decoratorRef = decorators[0];
+                    if (decoratorRef.getText().indexOf('@M.') !== 0) {
+                        decoratorRef.replaceWithText(`@M.${decoratorRef.getText().substr(1)}`)
+                    }
                 }
             });
         }
-
     }
 
     HandleMethod(method, isClient: boolean = false) {
@@ -73,7 +72,7 @@ export class MethodusProject {
                             }
                         }
                     } catch (error) {
-                        debugger;
+                       console.error(error);
                     }
                 });
 
@@ -85,7 +84,7 @@ export class MethodusProject {
                         decoratorRef.replaceWithText(`@M.${decoratorRef.getText().substr(1)}`)
                     }
                 } catch (error) {
-                    debugger;
+                    console.error(error);
                 }
             }
         });
