@@ -72,7 +72,7 @@ export class MethodusProject {
                             }
                         }
                     } catch (error) {
-                       console.error(error);
+                        console.error(error);
                     }
                 });
 
@@ -248,10 +248,9 @@ export class MethodusProject {
                 targetClass.getDecorators().forEach((decoratorRef) => {
                     if (decoratorRef.getName() === 'MethodConfig' || decoratorRef.getName() === 'MethodConfigBase') {
                         decoratorRef.getArguments().forEach((argument, index) => {
-                            if (index > 0) {
+                            if (index === 1) {
                                 try {
-                                    decoratorRef.removeArgument(argument);
-
+                                    argument.replaceWithText('[]');
                                 } catch (error) {
                                     console.error(error);
                                 }
