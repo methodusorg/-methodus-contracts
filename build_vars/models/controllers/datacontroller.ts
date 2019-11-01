@@ -2,7 +2,7 @@ import { MethodConfig, Method, Param, MethodResult, Body, Verbs } from '@methodu
 import { Query as DataQuery } from '@methodus/data';
 import { UserModel } from '../models/user.model';
 
-@MethodConfig('Data')
+@MethodConfigBase('Data')
 export class DataController {
 
     /*

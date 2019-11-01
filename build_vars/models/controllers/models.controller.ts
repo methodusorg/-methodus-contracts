@@ -1,10 +1,8 @@
-import { Method, MethodConfig, MethodResult, Verbs, Headers, Query, MethodError, Param, MethodMock } from '@methodus/server';
-import { Mock } from '../../../build_mocks/mock';
-import { UserModel } from '../models/user.model';
+import { MethodConfig } from '@methodus/server';
 /*start custom*/
 import { DataController } from './datacontroller';
 /*end custom*/
-@MethodConfig('ModelsController', [], UserModel)
+@MethodConfig('ModelsController', [], '/api/users')
 export class ModelsController extends DataController {
-    
+
 }

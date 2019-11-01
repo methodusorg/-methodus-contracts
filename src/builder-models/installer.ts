@@ -14,6 +14,9 @@ export class Installer {
 
     public prune(destFolder) {
         this.shell.cd(destFolder);
+        rimraf.sync(path.join(destFolder, 'node_modules','*'));
+        rimraf.sync(path.join(destFolder, 'node_modules','.bin'));
+        
         let commandStr = 'npm install --production --ignore-scripts --no-package-lock';
         if (process.env.YARN) {
             commandStr = 'yarn install --production --ignore-scripts';
