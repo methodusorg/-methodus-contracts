@@ -1,6 +1,6 @@
 {
     "name": "@methodus/contracts",
-    "version": "5.0.16",
+    "version": "5.0.17",
     "description": "",
     "main": "build/index.js",
     "bin": {
