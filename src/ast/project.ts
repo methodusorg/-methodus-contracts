@@ -33,7 +33,7 @@ export class MethodusProject {
         this.sourceFiles = this.project.getSourceFiles();
     }
 
-    HandleConstructor(constructor, isClient: boolean = false) {
+    HandleConstructor(constructor, isClient = false) {
         if (isClient) {
             constructor.getParameters().forEach((param) => {
                 const decorators = param.getDecorators();
@@ -47,7 +47,7 @@ export class MethodusProject {
         }
     }
 
-    HandleMethod(method, isClient: boolean = false) {
+    HandleMethod(method, isClient = false) {
         let isMocked = false;
 
 
@@ -66,10 +66,8 @@ export class MethodusProject {
                         }
                     }
                     try {
-                        if (isClient) {
-                            if (argument.getText().indexOf('Verbs.') === 0) {
-                                argument.replaceWithText(`M.${argument.getText()}`)
-                            }
+                        if (isClient && argument.getText().indexOf('Verbs.') === 0) {
+                            argument.replaceWithText(`M.${argument.getText()}`)
                         }
                     } catch (error) {
                         console.error(error);
@@ -98,10 +96,8 @@ export class MethodusProject {
             if (paramDecorator && paramDecorator[0] && paramDecorator[0].getName() === 'SecurityContext') {
                 arg.remove();
             } else {
-                if (isClient && paramDecorator[0]) {
-                    if (paramDecorator[0].getText().indexOf('@M') !== 0) {
-                        paramDecorator[0].replaceWithText(`@M.P.${paramDecorator[0].getText().substr(1)}`)
-                    }
+                if (isClient && paramDecorator[0] && paramDecorator[0].getText().indexOf('@M') !== 0) {
+                    paramDecorator[0].replaceWithText(`@M.P.${paramDecorator[0].getText().substr(1)}`)
                 }
             }
         });
@@ -160,17 +156,11 @@ export class MethodusProject {
                 method.insertText(method.getBody().getEnd() - 1, returnStr);
             }
 
-        } else {
-
         }
-
-
-
-
     }
 
 
-    HandleIncludeFile(sourceFile, dirName: string, isClient: boolean = false) {
+    HandleIncludeFile(sourceFile, dirName: string, isClient = false) {
         const basePath = path.join(this.projectPath, 'src', 'includes');
         this.project.createDirectory(basePath);
         this.project.saveSync();
@@ -188,7 +178,7 @@ export class MethodusProject {
         targetFile.saveSync();
     }
 
-    ProxifyFromFile(file, dirName: string, contractKey, isClient: boolean = false) {
+    ProxifyFromFile(file, dirName: string, contractKey, isClient = false) {
 
         const basePath = path.join(this.projectPath, 'src', dirName);
         this.project.createDirectory(basePath);
@@ -300,7 +290,6 @@ export class MethodusProject {
 
         // create the file
         const sourceFile = this.project.createSourceFile(path.join(basePath, `${file.getBaseName()}`), undefined, { overwrite: true });
-        //sourceFile.insertText(0, writer => writer.writeLine(HEADER));
 
 
         const classes = file.getClasses();
@@ -361,20 +350,6 @@ export class MethodusProject {
                 });
             }
         });
-
-
-
-        // if (buildConfiguration.contracts) {
-        //     const contracts = Object.assign({}, buildConfiguration.contracts);
-        //     Object.keys(contracts).forEach((contractsKey: string) => {
-        //         indexFile.addExportDeclaration({
-        //             moduleSpecifier: `./contracts/${contractsKey.toLocaleLowerCase()}`,
-        //             namedExports: [contractsKey]
-        //         });
-        //     });
-        // }
-
-
         indexFile.saveSync();
         return indexFile;
     }
