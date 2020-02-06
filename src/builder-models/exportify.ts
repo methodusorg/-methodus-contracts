@@ -15,11 +15,11 @@ export function ModelsIndex(buildConfiguration: Configuration, source: string, t
 
     if (buildConfiguration.models) {
         Object.keys(buildConfiguration.models).forEach((modelKey: string) => {
-            let cleanKey = modelKey;
-            if (!cleanKey.endsWith('Model')) {
-                cleanKey = cleanKey + 'Model';
-            }
-            let fullPath = path.basename(buildConfiguration.models[modelKey].path, '.ts');
+
+            const cleanKey = (!modelKey.endsWith('Model')) ? `${modelKey}Model` : modelKey;
+
+            const fullPath = path.basename(buildConfiguration.models[modelKey].path, '.ts');
+
             body += `export {${modelKey} as ${cleanKey}} from './${fullPath}';\n`;
         });
     }
@@ -36,7 +36,7 @@ export function ContractsIndex(buildConfiguration: Configuration, source: string
 
     if (buildConfiguration.contracts) {
         Object.keys(buildConfiguration.contracts).forEach((contractKey: string) => {
-            let fullPath = path.basename(buildConfiguration.contracts[contractKey].path, '.ts');
+            const fullPath = path.basename(buildConfiguration.contracts[contractKey].path, '.ts');
             body += `export * from './${fullPath}';\n`;
         });
     }
@@ -52,7 +52,7 @@ export function IncludesIndex(buildConfiguration: Configuration, source: string,
 
     if (buildConfiguration.includes) {
         Object.keys(buildConfiguration.includes).forEach((contractKey: string) => {
-            let fullPath = path.basename(buildConfiguration.includes[contractKey].path, '.ts');
+            const fullPath = path.basename(buildConfiguration.includes[contractKey].path, '.ts');
             body += `export * from './${fullPath}';\n`;
         });
     }
@@ -69,7 +69,7 @@ export function UseTemplate(fileName, targetFileName, destFolder, replacement?) 
     }
     Console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
     shell.mkdir('-p', destFolder);
-    fs.writeFileSync(path.join(destFolder, targetFileName), content + '\n');
+    fs.writeFileSync(path.join(destFolder, targetFileName), `${content}\n`);
 }
 export function UseCustomTemplate(fileName, targetFileName, destFolder, replacement?) {
     let content = fs.readFileSync(path.resolve(fileName), 'utf-8');
@@ -78,5 +78,5 @@ export function UseCustomTemplate(fileName, targetFileName, destFolder, replacem
     }
     shell.mkdir('-p', destFolder);
     Console.log(colors.blue(`> ${fileName} --> ${targetFileName}`));
-    fs.writeFileSync(path.join(destFolder, targetFileName), content + '\n');
+    fs.writeFileSync(path.join(destFolder, targetFileName), `${content}\n`);
 }

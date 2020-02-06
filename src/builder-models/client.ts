@@ -1,11 +1,9 @@
 
-import { UseTemplate, ModelsIndex, UseCustomTemplate } from './exportify';
+import { UseTemplate, UseCustomTemplate } from './exportify';
 import { Installer } from './installer';
 import { Configuration } from './interfaces';
 import * as path from 'path';
-import * as fs from 'fs';
-import { Common } from './common';
-const ROOTSRC = 'src';
+
 const PKGJSON = 'package.json';
 export class Client {
     Installer: Installer;
@@ -33,7 +31,4 @@ export class Client {
     public publish(dest: string) {
         this.Installer.publish(dest);
     }
-  
-
-
 }

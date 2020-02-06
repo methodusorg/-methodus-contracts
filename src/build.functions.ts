@@ -10,7 +10,7 @@ const Console = console;
 
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
-export async function Builder(contract?: string, isClient: boolean = false) {
+export async function Builder(contract?: string, isClient = false) {
     let buildConfiguration: Configuration | KeysConfiguration;
 
     Console.log(colors.blue(`> methodus ${isClient ? 'client' : 'server'} contract builder.`));
@@ -18,7 +18,7 @@ export async function Builder(contract?: string, isClient: boolean = false) {
     if (contract) {
         buildConfiguration = require(contract) as Configuration;
     } else {
-        const filePath = path.resolve(path.join(process.cwd(), process.argv[2]));
+        const filePath = path.resolve(path.join(process.cwd(), process.argv[2].toString()));
         Console.log(colors.green('> loading build configuration from:'), filePath);
         buildConfiguration = require(filePath) as KeysConfiguration;
 
@@ -104,7 +104,7 @@ async function build(buildConfiguration: any, checkList: string[], isClient: boo
         } catch (error) {
             console.error(error)
         }
-    };
+    }
     return true;
 }
 

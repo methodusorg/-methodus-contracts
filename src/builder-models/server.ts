@@ -41,14 +41,5 @@ export class Server {
     public publish(dest) {
         this.Installer.publish(dest);
     }
-    // public install(dest: string) {
-    //     this.Installer.build(dest);
-    // }
-
-    // public compile(dest: string) {
-    //     this.Installer.compile(dest);
-    // }
-    // public prune(dest: string) {
-    //     this.Installer.prune(dest);
-    // }
+ 
 }

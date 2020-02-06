@@ -1,7 +1,5 @@
 import {
-    Project, ScriptTarget, createWrappedNode, ClassDeclaration, TypeFormatFlags, IndentationText, NewLineKind, QuoteKind,
-    Decorator, MethodDeclaration, ConstructorDeclaration,
-    FormatCodeSettings, UserPreferences, SourceFile
+    Project, createWrappedNode, ClassDeclaration, IndentationText, NewLineKind, QuoteKind, FormatCodeSettings, UserPreferences, SourceFile, MethodDeclaration
 } from 'ts-morph';
 import * as path from 'path';
 import { HEADER, Configuration } from '../builder-models/interfaces';
@@ -54,7 +52,7 @@ export class MethodusProject {
         }
     }
 
-    HandleMethod(method, isClient = false) {
+    HandleMethod(method: MethodDeclaration, isClient = false) {
         let isMocked = false;
         method.getDecorators().forEach((decoratorRef) => {
             if (decoratorRef.getName() === 'Method' || decoratorRef.getName() === 'MethodPipe') {
@@ -104,63 +102,75 @@ export class MethodusProject {
             }
         });
 
+        this.HandleClientMethods(method, isClient, isMocked);
 
+        this.HandleMethodReturn(method, isClient, isMocked);
+    }
+
+    HandleClientMethods(method, isClient, isMocked) {
         if (isClient) {
             method.getDecorators().forEach((decoratorRef) => {
-                if (decoratorRef.getName() === 'MethodMock') {
-                    const mockResult = decoratorRef.getStructure().arguments[0];
+                if (decoratorRef && decoratorRef.getName() === 'MethodMock') {
+                    const struct = decoratorRef.getStructure();
+                    const mockResult = (struct.arguments && struct.arguments.length > 0) ? struct.arguments[0] : null;
                     decoratorRef.remove();
                     method.getStatements().forEach((statement) => {
                         statement.remove();
                     });
-                    const params = method.getStructure().parameters;
-                    const argsRow = params.map((argument) => {
+
+                    const methodStruct = method.getStructure();
+
+                    const argsRow = (methodStruct.parameters) ? methodStruct.parameters.map((argument) => {
                         return argument.name;
-                    }).join(',');
+                    }).join(',') : '';
+
+
                     method.setBodyText(writer => writer.writeLine(`return  ${mockResult}.apply(this, [${argsRow}]);`));
                     isMocked = true;
                 }
             });
         }
-
-
-
-
+    }
+    HandleMethodReturn(method: MethodDeclaration, isClient: boolean, isMocked: boolean) {
         if (!isMocked) {
             method.getStatements().forEach((statement) => {
                 statement.remove();
             });
         }
+
         if (method.getReturnTypeNode()) {
-            let retType = method.getReturnTypeNode().getText()
-            if (retType.indexOf('Promise<') > -1) {
-                retType = retType.replace('Promise<', '');
-                retType = retType.substr(0, retType.length - 1);
-            }
-
-            if (isClient) {
-                if (retType.indexOf('MethodResult<') > -1) {
-                    retType = retType.replace('MethodResult<', '');
-                    retType = retType.substr(0, retType.length - 1);
+            const returnType = method.getReturnTypeNode();
+            if (returnType) {
+                let retTypeText = returnType.getText()
+                if (retTypeText.indexOf('Promise<') > -1) {
+                    retTypeText = retTypeText.replace('Promise<', '');
+                    retTypeText = retTypeText.substr(0, retTypeText.length - 1);
                 }
 
-                const retNode = method.getReturnTypeNode()
-                if (retType === 'MethodResult') {
-                    retType = 'any';
+                if (isClient) {
+                    if (retTypeText.indexOf('MethodResult<') > -1) {
+                        retTypeText = retTypeText.replace('MethodResult<', '');
+                        retTypeText = retTypeText.substr(0, retTypeText.length - 1);
+                    }
+                    if (retTypeText === 'MethodResult') {
+                        retTypeText = 'any';
+                    }
+                    const retNode = method.getReturnTypeNode()
+                    if (retNode) {
+                        retNode.replaceWithText(`Promise<${retTypeText}>`);
+                    }
                 }
 
-                retNode.replaceWithText(`Promise<${retType}>`);
+
+                if (!isMocked && method.getBody()) {
+                    const methodBody = method.getBody();
+                    if (methodBody) {
+                        method.insertText(methodBody.getEnd() - 1, `        return null! as ${retTypeText};\n    `);
+                    }
+                }
             }
-
-
-            if (!isMocked) {
-                const returnStr = `        return null! as ${retType};\n    `
-                method.insertText(method.getBody().getEnd() - 1, returnStr);
-            }
-
         }
     }
-
 
     HandleIncludeFile(sourceFile, dirName: string, isClient = false) {
         const basePath = path.join(this.projectPath, 'src', 'includes');
@@ -266,7 +276,7 @@ export class MethodusProject {
                     this.HandleConstructor(method, isClient);
                 });
 
-                targetClass.getMethods().forEach((method) => {
+                targetClass.getMethods().forEach((method: MethodDeclaration) => {
                     this.HandleMethod(method, isClient);
                 });
 
