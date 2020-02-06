@@ -4,7 +4,7 @@
         "moduleResolution": "node",
         "module": "commonjs",
         
-        "outDir": "build",
+        "outDir": "lib",
         "rootDir": "src",
         "sourceMap": true, /* Generates corresponding '.map' file. */
         "declaration": true,

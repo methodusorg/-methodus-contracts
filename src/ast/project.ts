@@ -271,8 +271,12 @@ export class MethodusProject {
                 targetClass.getStaticMethods().forEach((method) => {
                     this.HandleMethod(method, isClient);
                 });
-                sourceFile.saveSync();
 
+                if(isClient){
+                    sourceFile.addStatements(`new ${classDec.getName()}()`);
+                }
+                
+                sourceFile.saveSync();
 
 
             } catch (error) {

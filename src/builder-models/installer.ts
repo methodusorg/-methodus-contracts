@@ -34,7 +34,7 @@ export class Installer {
     public compile(destFolder) {
         this.shell.cd(destFolder);
         rimraf.sync(path.join(destFolder, 'build'));
-        const execRes = exec('npm run compile');
+        const execRes = exec('tsc');
         const compileResult = execRes.code;
         if (execRes.stderr) {
             console.warn('error', execRes.stderr);

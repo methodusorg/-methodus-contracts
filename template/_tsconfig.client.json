@@ -8,7 +8,7 @@
             "es2015",
             "dom"
         ],
-        "outDir": "build",
+        "outDir": "lib",
         "target": "ES5",
         "module": "commonjs",
         "moduleResolution": "node",

@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "D | Debug contracts",
-            "program": "${workspaceRoot}\\build\\tests\\debug.js",
+            "program": "${workspaceRoot}\\lib\\tests\\debug.js",
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
             "outFiles": [],
@@ -25,7 +25,7 @@
             "type": "node",
             "request": "launch",
             "name": "T | Test server contracts | Simple",
-            "program": "${workspaceRoot}\\build\\build_consumers\\server\\simple\\index.js",
+            "program": "${workspaceRoot}\\lib\\build_consumers\\server\\simple\\index.js",
             "args": [],
             "cwd": "${workspaceRoot}\\",
             "console": "internalConsole",
@@ -40,7 +40,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile server contracts | Simple",
-            "program": "${workspaceRoot}\\build\\build.js",
+            "program": "${workspaceRoot}\\lib\\build.js",
             "args": [
                 "./build_vars/simple/build.json"
             ],
@@ -59,7 +59,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts | Simple",
-            "program": "${workspaceRoot}\\build\\client.js",
+            "program": "${workspaceRoot}\\lib\\client.js",
             "args": [
                 "./build_vars/simple/build.json"
             ],
@@ -77,7 +77,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile server contracts | Models",
-            "program": "${workspaceRoot}\\build\\build.js",
+            "program": "${workspaceRoot}\\lib\\build.js",
             "args": [
                 "./build_vars/models/build.json"
             ],
@@ -94,7 +94,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts | Models",
-            "program": "${workspaceRoot}\\build\\client.js",
+            "program": "${workspaceRoot}\\lib\\client.js",
             "args": [
                 "./build_vars/models/build.json"
             ],
@@ -111,7 +111,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile server contracts | Inherit",
-            "program": "${workspaceRoot}\\build\\build.js",
+            "program": "${workspaceRoot}\\lib\\build.js",
             "args": [
                 "./build_vars/inherit/build.json"
             ],
@@ -128,7 +128,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts | Inherit",
-            "program": "${workspaceRoot}\\build\\client.js",
+            "program": "${workspaceRoot}\\lib\\client.js",
             "args": [
                 "./build_vars/inherit/build.json"
             ],
@@ -147,7 +147,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile contracts",
-            "program": "${workspaceRoot}\\build\\build.js",
+            "program": "${workspaceRoot}\\lib\\build.js",
             "args": [
                 "./build.json"
             ],
@@ -168,7 +168,7 @@
             "type": "node",
             "request": "launch",
             "name": "U | Compile client contracts",
-            "program": "${workspaceRoot}\\build\\client.js",
+            "program": "${workspaceRoot}\\lib\\client.js",
             "args": [
                 "./build.json"
             ],
@@ -225,7 +225,7 @@
             "program": "${workspaceRoot}/node_modules/alsatian/dist/cli/alsatian-cli",
             "stopOnEntry": false,
             "args": [
-                "build/tests/client.spec.js"
+                "lib/tests/client.spec.js"
             ],
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
