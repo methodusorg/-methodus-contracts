@@ -13,6 +13,7 @@ export class MethodusProject {
 
     constructor(public projectPath: string, public packageName: string) {
         this.project = new Project({
+
             manipulationSettings: {
                 // TwoSpaces, FourSpaces, EightSpaces, or Tab
                 indentationText: IndentationText.Tab,
@@ -26,6 +27,12 @@ export class MethodusProject {
                 usePrefixAndSuffixTextForRename: false
             },
             compilerOptions: {
+                declaration: true,
+                sourceMap: true,
+                preserveConstEnums: true,
+                emitDecoratorMetadata: true,
+                experimentalDecorators: true,
+                outDir: `${projectPath}/lib`,
                 tsConfigFilePath: `${projectPath}/tsconfig.json`
             }
         });
@@ -49,12 +56,7 @@ export class MethodusProject {
 
     HandleMethod(method, isClient = false) {
         let isMocked = false;
-
-
-
         method.getDecorators().forEach((decoratorRef) => {
-
-
             if (decoratorRef.getName() === 'Method' || decoratorRef.getName() === 'MethodPipe') {
                 decoratorRef.getArguments().forEach((argument, index) => {
                     if (index > 1) {
@@ -272,10 +274,10 @@ export class MethodusProject {
                     this.HandleMethod(method, isClient);
                 });
 
-                if(isClient){
+                if (isClient) {
                     sourceFile.addStatements(`new ${classDec.getName()}()`);
                 }
-                
+
                 sourceFile.saveSync();
 
 
@@ -326,7 +328,7 @@ export class MethodusProject {
         }
 
         const prefernces: UserPreferences = {
-            importModuleSpecifierPreference: "non-relative"
+            importModuleSpecifierPreference: 'non-relative'
         }
 
         try {
@@ -334,7 +336,7 @@ export class MethodusProject {
             sourceFile.fixMissingImports(format, prefernces);
             sourceFile.saveSync();
         } catch (error) {
-            console.log(file.getFilePath());
+            console.error(file.getFilePath());
             console.error(error);
         }
     }
@@ -357,4 +359,7 @@ export class MethodusProject {
         indexFile.saveSync();
         return indexFile;
     }
+
+
+
 }

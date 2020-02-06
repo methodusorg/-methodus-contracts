@@ -222,11 +222,9 @@
             "console": "internalConsole",
             "name": "T | Run Client Contracts test",
             "type": "node",
-            "program": "${workspaceRoot}/node_modules/alsatian/dist/cli/alsatian-cli",
+            "program": "${workspaceRoot}/node_modules/jest/bin/jest",
             "stopOnEntry": false,
-            "args": [
-                "lib/tests/client.spec.js"
-            ],
+            "outputCapture": "std",
             "sourceMaps": true,
             "cwd": "${workspaceRoot}",
             "runtimeExecutable": null,

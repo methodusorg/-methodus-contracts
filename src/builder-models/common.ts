@@ -81,6 +81,6 @@ export class Common {
             ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
         }
         targetProject.Exportify(configuration, target, packageName, isClient);
-
+        return targetProject;
     }
 }

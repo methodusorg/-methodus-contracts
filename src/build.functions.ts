@@ -64,7 +64,8 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
 
             }
 
-            Common.newCommonFlow(configurationItem, '', destPath, sourcePath, isClient);
+            const targetProject = Common.newCommonFlow(configurationItem, '', destPath, sourcePath, isClient);
+            const emitResult = await targetProject.project.emit();       
             return builder;
         }
 
@@ -78,16 +79,24 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
 }
 
 async function postBuild(destPath, checkList, builder, singleConfiguration, publish) {
-    builder.install(destPath);
-    builder.compile(destPath);
+
+    // try {
+    //     builder.install(destPath);
+    // } catch (error) {
+    //     console.error(error);
+    // }
+
+ 
+
+
+
 
 
 
     if (!process.env.KEEP_SRC) {
         rimraf.sync(path.join(destPath, 'src'));
-
     }
-    builder.prune(destPath);
+    // builder.prune(destPath);
 
     if (publish) {
         builder.publish(destPath);
@@ -97,16 +106,19 @@ async function postBuild(destPath, checkList, builder, singleConfiguration, publ
 }
 
 async function build(buildConfiguration: any, checkList: string[], isClient: boolean, publish: boolean) {
-    Object.keys(buildConfiguration).forEach(async (singleConfiguration) => {
+    for (const singleConfiguration of Object.keys(buildConfiguration)) {
+
         const configurationItem = buildConfiguration[singleConfiguration];
         Console.log(colors.green(` > ${singleConfiguration}`));
 
         const destPath = path.resolve(path.join(configurationItem.buildPath, isClient ? configurationItem.contractNameClient : configurationItem.contractNameServer));
-
         const builder = await singleBuild(configurationItem, destPath, isClient, checkList);
-
-        await postBuild(destPath, checkList, builder, singleConfiguration, publish);
-    });
+        try {
+            await postBuild(destPath, checkList, builder, singleConfiguration, publish);
+        } catch (error) {
+            console.error(error)
+        }
+    };
     return true;
 }
 

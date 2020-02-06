@@ -34,21 +34,21 @@ export class Server {
 
     }
 
-    public link(dest) {
+    public link(dest: string) {
         this.Installer.link(dest);
     }
 
     public publish(dest) {
         this.Installer.publish(dest);
     }
-    public install(dest) {
-        this.Installer.build(dest);
-    }
+    // public install(dest: string) {
+    //     this.Installer.build(dest);
+    // }
 
-    public compile(dest) {
-        this.Installer.compile(dest);
-    }
-    public prune(dest) {
-        this.Installer.prune(dest);
-    }
+    // public compile(dest: string) {
+    //     this.Installer.compile(dest);
+    // }
+    // public prune(dest: string) {
+    //     this.Installer.prune(dest);
+    // }
 }
