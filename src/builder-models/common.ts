@@ -24,7 +24,7 @@ export class Common {
             //ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
         }
 
-        ``
+        
         if (configuration.contracts) {
             Object.keys(configuration.contracts).forEach((contractKey) => {
                 const contract = configuration.contracts[contractKey];
