@@ -65,7 +65,7 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
             }
 
             const targetProject = Common.newCommonFlow(configurationItem, '', destPath, sourcePath, isClient);
-            const emitResult = await targetProject.project.emit();       
+            await targetProject.project.emit();
             return builder;
         }
 
@@ -80,23 +80,9 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
 
 async function postBuild(destPath, checkList, builder, singleConfiguration, publish) {
 
-    // try {
-    //     builder.install(destPath);
-    // } catch (error) {
-    //     console.error(error);
-    // }
-
- 
-
-
-
-
-
-
     if (!process.env.KEEP_SRC) {
         rimraf.sync(path.join(destPath, 'src'));
     }
-    // builder.prune(destPath);
 
     if (publish) {
         builder.publish(destPath);

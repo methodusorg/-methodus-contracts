@@ -33,16 +33,7 @@ export class Client {
     public publish(dest: string) {
         this.Installer.publish(dest);
     }
-    // public install(dest: string) {
-    //     this.Installer.build(dest);
-    // }
-    // public compile(dest) {
-    //     this.Installer.compile(dest);
-    // }
-
-    // public prune(dest) {
-    //     this.Installer.prune(dest);
-    // }
+  
 
 
 }

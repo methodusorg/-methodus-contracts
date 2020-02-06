@@ -3,9 +3,9 @@
 import { Builder } from '../build.functions';
 import * as path from 'path';
 
-//, 'models', 'inherit'
+
 describe('Build server contracts', () => {
-    for (const contract of ['simple']) {
+    for (const contract of ['simple', 'models', 'inherit']) {
         test('Build server contracts', async () => {
             try {
                 process.chdir(path.join(__dirname, '..', '..'));// reset the cwd, since it changes when generating cotracts

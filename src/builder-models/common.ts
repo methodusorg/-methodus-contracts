@@ -21,7 +21,6 @@ export class Common {
                 const modelFile = sourceProject.project.addExistingSourceFile(path.join(source, model.path));
                 targetProject.ProxifyFromModel(modelFile, 'models', modelKey.toLocaleLowerCase());
             });
-            //ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
         }
 
         
@@ -31,7 +30,6 @@ export class Common {
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, contract.path));
                 targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase(), isClient);
             });
-            // ContractsIndex(configuration, source, path.join(target, ROOTSRC, 'contracts'), packageName);
         }
 
         if (configuration.includes) {
@@ -40,7 +38,6 @@ export class Common {
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, include.path));
                 targetProject.HandleIncludeFile(sourceFile, 'includes', isClient);
             });
-            //  IncludesIndex(configuration, source, path.join(target, ROOTSRC, 'includes'), packageName);
         }
 
         const format: FormatCodeSettings = {
