@@ -12,8 +12,8 @@ export class Common {
 
         rimraf.sync(path.join(target, 'build'));
 
-        const sourceProject = new MethodusProject(source, packageName);
-        const targetProject = new MethodusProject(target, packageName);
+        const sourceProject = new MethodusProject(source, packageName,isClient);
+        const targetProject = new MethodusProject(target, packageName,isClient);
 
         if (configuration.models && Object.keys(configuration.models).length > 0) {
             Object.keys(configuration.models).forEach((modelKey) => {

@@ -12,14 +12,15 @@ process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
 export async function Builder(contract?: string, isClient = false) {
     let buildConfiguration: Configuration | KeysConfiguration;
+    const pkg = require(path.join('..', 'package.json'));
 
-    Console.log(colors.blue(`> methodus ${isClient ? 'client' : 'server'} contract builder.`));
+    Console.log(colors.blue(`>> methodus ${isClient ? 'client' : 'server'} contract builder. v${pkg.version}`));
     let publish = false;
     if (contract) {
         buildConfiguration = require(contract) as Configuration;
     } else {
         const filePath = path.resolve(path.join(process.cwd(), process.argv[2].toString()));
-        Console.log(colors.green('> loading build configuration from:'), filePath);
+        Console.log(colors.green('>> loading build configuration from:'), filePath);
         buildConfiguration = require(filePath) as KeysConfiguration;
 
         publish = process.argv[3] === '-p' || publish;
@@ -29,7 +30,7 @@ export async function Builder(contract?: string, isClient = false) {
     await build(buildConfiguration, checkList, isClient, publish);
     Console.log(checkList.join('\n'));
 
-    Console.log('completed build plan, exiting.');
+    Console.log('>> completed build plan, exiting.');
     return true;
 }
 

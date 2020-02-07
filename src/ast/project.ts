@@ -1,4 +1,5 @@
 import {
+    ScriptTarget,
     Project, createWrappedNode, ClassDeclaration, IndentationText, NewLineKind, QuoteKind, FormatCodeSettings, UserPreferences, SourceFile, MethodDeclaration
 } from 'ts-morph';
 import * as path from 'path';
@@ -9,7 +10,7 @@ export class MethodusProject {
     project: Project;
     sourceFiles: any[];
 
-    constructor(public projectPath: string, public packageName: string) {
+    constructor(public projectPath: string, public packageName: string, isClient: boolean) {
         this.project = new Project({
 
             manipulationSettings: {
@@ -25,13 +26,14 @@ export class MethodusProject {
                 usePrefixAndSuffixTextForRename: false
             },
             compilerOptions: {
+                target: (isClient) ? ScriptTarget.ES5 : ScriptTarget.ESNext,
                 declaration: true,
                 sourceMap: true,
                 preserveConstEnums: true,
                 emitDecoratorMetadata: true,
                 experimentalDecorators: true,
                 outDir: `${projectPath}/lib`,
-                tsConfigFilePath: `${projectPath}/tsconfig.json`
+                // tsConfigFilePath: path.join(projectPath, 'tsconfig.json')
             }
         });
         this.project.addExistingSourceFiles(`${projectPath}/src/**/*{.ts}`);
