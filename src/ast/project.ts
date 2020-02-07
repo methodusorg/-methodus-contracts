@@ -33,7 +33,7 @@ export class MethodusProject {
                 emitDecoratorMetadata: true,
                 experimentalDecorators: true,
                 outDir: `${projectPath}/lib`,
-                // tsConfigFilePath: path.join(projectPath, 'tsconfig.json')
+               
             }
         });
         this.project.addExistingSourceFiles(`${projectPath}/src/**/*{.ts}`);

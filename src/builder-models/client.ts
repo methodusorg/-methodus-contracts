@@ -13,14 +13,14 @@ export class Client {
         const originalPackage = require(path.join(source, PKGJSON));
         UseTemplate('_package.client.json', PKGJSON, target,
             { name: configuration.contractNameClient, version: originalPackage.version });
-        UseTemplate('_tsconfig.client.json', 'tsconfig.json', target,
-            { name: configuration.contractNameClient, version: originalPackage.version });
-        UseTemplate('_.gitignore', '.gitignore', target);
+
         UseTemplate('_.npmignore', '.npmignore', target);
+        if (configuration.npmignore) {
+            UseCustomTemplate(path.join(source, configuration.npmignore), '.npmignore', target);
+        }
+
         if (configuration.npmrc) {
             UseCustomTemplate(path.join(source, configuration.npmrc), '.npmrc', target);
-        } else {
-            UseTemplate('_.npmrc', '.npmrc', target);
         }
 
     }

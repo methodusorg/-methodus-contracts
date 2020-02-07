@@ -3,16 +3,9 @@
     "version": "{version}",
     "description": "",
     "main": "lib/index",
-    "scripts": {
-        "compile": "tsc",
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
+    "scripts": {},
     "author": "",
     "license": "ISC",
-    "devDependencies": {
-        "@methodus/client": "latest",
-        "@types/node": "^7.0.31",
-        "typescript": "^3.5.3"
-    },
+    "devDependencies": {},
     "dependencies": {}
 }

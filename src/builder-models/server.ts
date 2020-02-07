@@ -18,8 +18,8 @@ export class Server {
         const originalPackage = require(path.join(source, PKGJSON));
         UseTemplate('_package.json', PKGJSON, target,
             { name: configuration.contractNameServer, version: originalPackage.version });
-        UseTemplate('_tsconfig.json', 'tsconfig.json', target,
-            { name: configuration.contractNameServer, version: originalPackage.version });
+        // UseTemplate('_tsconfig.json', 'tsconfig.json', target,
+        //     { name: configuration.contractNameServer, version: originalPackage.version });
         UseTemplate('_.gitignore', '.gitignore', target);
         UseTemplate('_.npmignore', '.npmignore', target);
         if (configuration.npmrc) {
