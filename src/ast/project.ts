@@ -33,7 +33,7 @@ export class MethodusProject {
                 emitDecoratorMetadata: true,
                 experimentalDecorators: true,
                 outDir: `${projectPath}/lib`,
-               
+
             }
         });
         this.project.addExistingSourceFiles(`${projectPath}/src/**/*{.ts}`);
@@ -104,7 +104,7 @@ export class MethodusProject {
             }
         });
 
-        this.HandleClientMethods(method, isClient, isMocked);
+        isMocked = this.HandleClientMethods(method, isClient, isMocked);
 
         this.HandleMethodReturn(method, isClient, isMocked);
     }
@@ -128,10 +128,12 @@ export class MethodusProject {
 
 
                     method.setBodyText(writer => writer.writeLine(`return  ${mockResult}.apply(this, [${argsRow}]);`));
+                    this.project.saveSync();
                     isMocked = true;
                 }
             });
         }
+        return isMocked
     }
     HandleMethodReturn(method: MethodDeclaration, isClient: boolean, isMocked: boolean) {
         if (!isMocked) {

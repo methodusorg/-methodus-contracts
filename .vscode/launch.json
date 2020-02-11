@@ -68,7 +68,7 @@
             "outFiles": [],
             "sourceMaps": true,
             "env": {
-                
+                "KEEP_SRC":"true",
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }
