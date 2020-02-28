@@ -1,4 +1,4 @@
-import { Configuration, KeysConfiguration } from './builder-models/interfaces';
+import { Configuration, KeysConfiguration, BuildOptions } from './builder-models/interfaces';
 import * as path from 'path';
 import * as colors from 'colors';
 import * as rimraf from 'rimraf';
@@ -8,13 +8,14 @@ import { Server } from './builder-models/server';
 
 const Console = console;
 
+
 process.env.NODE_CONFIG_DIR = path.join(process.cwd(), 'config');
 
-export async function Builder(contract?: string, isClient = false) {
+export async function Builder(options: BuildOptions, contract?: string) {
     let buildConfiguration: Configuration | KeysConfiguration;
     const pkg = require(path.join('..', 'package.json'));
 
-    Console.log(colors.blue(`>> methodus ${isClient ? 'client' : 'server'} contract builder. v${pkg.version}`));
+    Console.log(colors.blue(`>> methodus ${options.isClient ? 'client' : 'server'} contract builder. v${pkg.version}`));
     let publish = false;
     if (contract) {
         buildConfiguration = require(contract) as Configuration;
@@ -23,11 +24,15 @@ export async function Builder(contract?: string, isClient = false) {
         Console.log(colors.green('>> loading build configuration from:'), filePath);
         buildConfiguration = require(filePath) as KeysConfiguration;
 
-        publish = process.argv[3] === '-p' || publish;
+        options.publish = process.argv[3] === '-p' || publish;
     }
 
+    if(buildConfiguration.protobuf){
+        options.isProtobuf = true;
+    }
+    
     const checkList: string[] = [];
-    await build(buildConfiguration, checkList, isClient, publish);
+    await build(buildConfiguration, checkList, options);
     Console.log(checkList.join('\n'));
 
     Console.log('>> completed build plan, exiting.');
@@ -36,7 +41,7 @@ export async function Builder(contract?: string, isClient = false) {
 
 
 
-async function singleBuild(configurationItem, destPath, isClient, checkList: string[]) {
+async function singleBuild(configurationItem, destPath, checkList: string[], options: BuildOptions) {
 
     let sourcePath = process.cwd();
     if (!configurationItem.buildPath) {
@@ -56,7 +61,7 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
     try {
         if (configurationItem !== null) {
             let builder: any = null;
-            if (isClient) {
+            if (options.isClient) {
                 builder = new Client(configurationItem,
                     sourcePath, destPath);
 
@@ -65,7 +70,7 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
 
             }
 
-            const targetProject = Common.newCommonFlow(configurationItem, '', destPath, sourcePath, isClient);
+            const targetProject = Common.newCommonFlow(configurationItem, '', destPath, sourcePath, options);
             await targetProject.project.emit();
             return builder;
         }
@@ -79,29 +84,29 @@ async function singleBuild(configurationItem, destPath, isClient, checkList: str
 
 }
 
-async function postBuild(destPath, checkList, builder, singleConfiguration, publish) {
+async function postBuild(destPath, checkList, builder, singleConfiguration, options: BuildOptions) {
 
     if (!process.env.KEEP_SRC) {
         rimraf.sync(path.join(destPath, 'src'));
     }
 
-    if (publish) {
+    if (options.publish) {
         builder.publish(destPath);
     }
 
     checkList.push(`${singleConfiguration}: ok`);
 }
 
-async function build(buildConfiguration: any, checkList: string[], isClient: boolean, publish: boolean) {
+async function build(buildConfiguration: any, checkList: string[], options: BuildOptions) {
     for (const singleConfiguration of Object.keys(buildConfiguration)) {
 
         const configurationItem = buildConfiguration[singleConfiguration];
         Console.log(colors.green(` > ${singleConfiguration}`));
 
-        const destPath = path.resolve(path.join(configurationItem.buildPath, isClient ? configurationItem.contractNameClient : configurationItem.contractNameServer));
-        const builder = await singleBuild(configurationItem, destPath, isClient, checkList);
+        const destPath = path.resolve(path.join(configurationItem.buildPath, options.isClient ? configurationItem.contractNameClient : configurationItem.contractNameServer));
+        const builder = await singleBuild(configurationItem, destPath, checkList, options);
         try {
-            await postBuild(destPath, checkList, builder, singleConfiguration, publish);
+            await postBuild(destPath, checkList, builder, singleConfiguration, options);
         } catch (error) {
             console.error(error)
         }

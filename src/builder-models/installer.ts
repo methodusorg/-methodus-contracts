@@ -11,29 +11,29 @@ export class Installer {
 
 
 
-    public link(destFolder) {
-        const cwd = process.cwd();
-        this.shell.cd(destFolder);
-        let commandStr = 'npm unlink';
-        if (process.env.YARN) {
-            commandStr = 'yarn unlink';
-        }
+    // public link(destFolder) {
+    //     const cwd = process.cwd();
+    //     this.shell.cd(destFolder);
+    //     let commandStr = 'npm unlink';
+    //     if (process.env.YARN) {
+    //         commandStr = 'yarn unlink';
+    //     }
 
 
-        exec(commandStr);
+    //     exec(commandStr);
 
-        commandStr = 'npm link';
-        if (process.env.YARN) {
-            commandStr = 'yarn link';
-        }
+    //     commandStr = 'npm link';
+    //     if (process.env.YARN) {
+    //         commandStr = 'yarn link';
+    //     }
 
-        if (exec(commandStr).code !== 0) {
-            this.shell.cd(cwd);
-            throw (new Error('could not link contract'));
-        }
+    //     if (exec(commandStr).code !== 0) {
+    //         this.shell.cd(cwd);
+    //         throw (new Error('could not link contract'));
+    //     }
 
-        this.shell.cd(cwd);
-    }
+    //     this.shell.cd(cwd);
+    // }
 
     public publish(destFolder) {
         const cwd = process.cwd();

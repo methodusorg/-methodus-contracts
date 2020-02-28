@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import { Builder } from './build.functions';
+import { BuildOptions } from './builder-models/interfaces';
 (async () => {
-    await Builder(undefined , true);
+    const options = new BuildOptions(true, false);
+    await Builder(options);
 })();

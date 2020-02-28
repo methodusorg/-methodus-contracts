@@ -1,5 +1,4 @@
 import { Method, MethodConfig, MethodResult, Param, MethodMock, SecurityContext } from '@methodus/server';
-import { Verbs } from '@methodus/platform-express';
 import { Mock } from '../mocks/mock';
 
 
@@ -11,7 +10,7 @@ export class Simple {
 
     }
     @MethodMock(Mock.simple)
-    @Method(Verbs.Get, '/simple/get')
+    @Method()
     public async get(@Param('id') id: string, @SecurityContext() user: any): Promise<MethodResult<any>> {
         // some comments
         let x = 1 + 1;
@@ -20,7 +19,8 @@ export class Simple {
         //some othe comments
     }
 
-    @Method(Verbs.Post, '/simple/post')
+    @MethodMock(Mock.simple)
+    @Method()
     public async post(@Param('id') id: string): Promise<MethodResult> {
         return new MethodResult({ Name: 'roi' });
     }

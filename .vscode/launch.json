@@ -7,24 +7,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "D | Debug contracts",
-            "program": "${workspaceRoot}\\lib\\tests\\debug.js",
-            "cwd": "${workspaceRoot}\\",
-            "console": "internalConsole",
-            "outFiles": [],
-            "sourceMaps": true,
-            "env": {
-                "DEBUG": "none",
-                "NODE_ENV": "debug",
-                "NODE_CONFIG_ENV": "local",
-                "NODE_CONFIG_DIR": "${workspaceRoot}/tests/config/",
-                "NODE_LOG_DIR": "./logs"
-            }
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "T | Test server contracts | Simple",
+            "name": "T | Consume server contracts | Simple",
             "program": "${workspaceRoot}\\lib\\build_consumers\\server\\simple\\index.js",
             "args": [],
             "cwd": "${workspaceRoot}\\",
@@ -50,7 +33,6 @@
             "outFiles": [],
             "sourceMaps": true,
             "env": {
-                
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }
@@ -68,7 +50,7 @@
             "outFiles": [],
             "sourceMaps": true,
             "env": {
-                "KEEP_SRC":"true",
+                "KEEP_SRC": "true",
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }
@@ -137,8 +119,6 @@
             "outFiles": [],
             "sourceMaps": true,
             "env": {
-               
-               
                 "DEBUG": "none",
                 "NODE_ENV": "debug"
             }
@@ -188,33 +168,22 @@
         {
             "request": "launch",
             "console": "internalConsole",
-            // Name of configuration; appears in the launch configuration drop down menu.
             "name": "T | Run Contracts test",
-            // Type of configuration. Possible values: "node", "mono".
             "type": "node",
-            // Workspace relative or absolute path to the program.
-            "program": "${workspaceRoot}/node_modules/alsatian/dist/cli/alsatian-cli",
-            // Automatically stop program after launch.
+            "program": "${workspaceRoot}/lib/tests/build.test.js",
             "stopOnEntry": false,
-            // Command line arguments passed to the program.
-            "args": [
-                "build/tests/*.spec.js"
-            ],
             "sourceMaps": true,
-            // Workspace relative or absolute path to the working directory of the program being debugged. Default is the current workspace.
             "cwd": "${workspaceRoot}",
-            // Workspace relative or absolute path to the runtime executable to be used. Default is the runtime executable on the PATH.
             "runtimeExecutable": null,
-            // Environment variables passed to the program.
             "env": {
-                "KEEP_SRC":"true",
-                "NODE_LOG_CONSOLE":"true",
-                "NODE_LOG_LEVEL": "trace",
-                "NODE_ENV": "debug",
-                "NODE_CONFIG_ENV": "local",
-                "NODE_CONFIG_DIR": "${workspaceRoot}/tests/config/",
-                "NODE_LOG_DIR": "./logs",
-                "PORT": "2065"
+                // "KEEP_SRC": "true",
+                // "NODE_LOG_CONSOLE": "true",
+                // "NODE_LOG_LEVEL": "trace",
+                // "NODE_ENV": "debug",
+                // "NODE_CONFIG_ENV": "local",
+                // "NODE_CONFIG_DIR": "${workspaceRoot}/tests/config/",
+                // "NODE_LOG_DIR": "./logs",
+                // "PORT": "2065"
             }
         },
         {

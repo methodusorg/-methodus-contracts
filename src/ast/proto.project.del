@@ -1,12 +1,14 @@
 import {
     ScriptTarget,
-    Project, createWrappedNode, ClassDeclaration, IndentationText, NewLineKind, QuoteKind, FormatCodeSettings, UserPreferences, SourceFile, MethodDeclaration
+    Project, createWrappedNode, ClassDeclaration, IndentationText,
+    NewLineKind, QuoteKind,
+    FormatCodeSettings, UserPreferences, SourceFile, MethodDeclaration
 } from 'ts-morph';
 import * as path from 'path';
 import { HEADER, Configuration, BuildOptions } from '../builder-models/interfaces';
 
 
-export class MethodusProject {
+export class ProtoProject {
     project: Project;
     sourceFiles: any[];
 
@@ -40,19 +42,19 @@ export class MethodusProject {
         this.sourceFiles = this.project.getSourceFiles();
     }
 
-    HandleConstructor(constructor, options: BuildOptions) {
-        if (options.isClient) {
-            constructor.getParameters().forEach((param) => {
-                const decorators = param.getDecorators();
-                if (decorators.length) {
-                    const decoratorRef = decorators[0];
-                    if (decoratorRef.getText().indexOf('@M.') !== 0) {
-                        decoratorRef.replaceWithText(`@M.${decoratorRef.getText().substr(1)}`)
-                    }
-                }
-            });
-        }
-    }
+    // HandleConstructor(constructor, options: BuildOptions) {
+    //     if (options.isClient) {
+    //         constructor.getParameters().forEach((param) => {
+    //             const decorators = param.getDecorators();
+    //             if (decorators.length) {
+    //                 const decoratorRef = decorators[0];
+    //                 if (decoratorRef.getText().indexOf('@M.') !== 0) {
+    //                     decoratorRef.replaceWithText(`@M.${decoratorRef.getText().substr(1)}`)
+    //                 }
+    //             }
+    //         });
+    //     }
+    // }
 
     HandleMethod(method: MethodDeclaration, options: BuildOptions) {
 
@@ -190,19 +192,15 @@ export class MethodusProject {
                 }
             });
         }
-
         targetFile.saveSync();
     }
 
-
-
-
-
     ProxifyFromFile(file, dirName: string, contractKey, options: BuildOptions) {
-
+        debugger;
         const basePath = path.join(this.projectPath, 'src', dirName);
         this.project.createDirectory(basePath);
         this.project.saveSync();
+
 
         // create the file
         const sourceFile = this.project.createSourceFile(path.join(basePath, `${file.getBaseName()}`), undefined, { overwrite: true });
@@ -210,101 +208,21 @@ export class MethodusProject {
 
         const classes = file.getClasses();
         if (classes) {
-            if (!options.isClient) {
-
-                sourceFile.addImportDeclaration({
-                    moduleSpecifier: '@methodus/server',
-                    namedImports: [
-                        'Proxy',
-                        'MethodConfig',
-                        'MethodConfigBase',
-                        'Method',
-                        'Param',
-                        'Query',
-                        'Headers',
-                        'Body',
-                        'SecurityContext',
-                        'Files',
-                        'Verbs',
-                        'MethodResult',
-                        'MethodMock',
-                        'Injectable',
-                        'Inject'
-                    ]
-                });
-            } else {
-                sourceFile.addImportDeclaration({
-                    moduleSpecifier: '@methodus/client',
-                    namespaceImport: 'M'
-                });
-            }
-            sourceFile.addImportDeclaration({
-                moduleSpecifier: `../models`,
-
-            });
-
-            sourceFile.addImportDeclaration({
-                moduleSpecifier: `../contracts`,
-
-            });
-
 
             const classDec = createWrappedNode(classes[0].compilerNode) as ClassDeclaration;
 
-
             try {
-                const targetClass = sourceFile.addClass(classDec.getStructure());
-                // //methodConfig decorator
-                targetClass.getDecorators().forEach((decoratorRef) => {
-                    if (decoratorRef.getName() === 'MethodConfig' || decoratorRef.getName() === 'MethodConfigBase') {
-                        decoratorRef.getArguments().forEach((argument, index) => {
-                            if (index === 1) {
-                                try {
-                                    argument.replaceWithText('[]');
-                                } catch (error) {
-                                    console.error(error);
-                                }
-                            }
-                        });
-                    }
-
-                    if (options.isClient && decoratorRef.getText().indexOf('@M.') !== 0) {
-                        decoratorRef.replaceWithText(`@M.${decoratorRef.getText().substr(1)}`)
-                    }
-                });
-
-                if (!options.isClient) {
-                    targetClass.insertDecorator(0, {
-                        name: 'Proxy.ProxyClass',
-                        arguments: [`'${this.packageName}'`, `'${classDec.getName()}'`, `'${file.getFilePath()}'`]
-                    });
-                }
-
-                targetClass.getConstructors().forEach((method) => {
-                    this.HandleConstructor(method, options);
-                });
-
-                targetClass.getMethods().forEach((method: MethodDeclaration) => {
+                classDec.getMethods().forEach((method: MethodDeclaration) => {
+                    debugger;
                     this.HandleMethod(method, options);
                 });
-
-                targetClass.getStaticMethods().forEach((method) => {
-                    this.HandleMethod(method, options);
-                });
-
-                if (options.isClient) {
-                    sourceFile.addStatements(`new ${classDec.getName()}()`);
-                }
 
                 sourceFile.saveSync();
-
-
             } catch (error) {
                 console.error(error);
             }
         }
     }
-
 
     ProxifyFromModel(file, dirName: string, modelKey: string) {
         const basePath = path.join(this.projectPath, 'src', dirName);

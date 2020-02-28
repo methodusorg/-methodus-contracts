@@ -3,17 +3,19 @@ import * as path from 'path';
 import { MethodusProject } from '../ast/project';
 import * as rimraf from 'rimraf';
 import { FormatCodeSettings, UserPreferences } from 'ts-morph';
+import { BuildOptions } from './interfaces';
 
 const ROOTSRC = 'src';
 
+
 export class Common {
 
-    public static newCommonFlow(configuration, packageName, target, source, isClient) {
+    public static newCommonFlow(configuration, packageName, target, source, options: BuildOptions) {
 
         rimraf.sync(path.join(target, 'build'));
 
-        const sourceProject = new MethodusProject(source, packageName,isClient);
-        const targetProject = new MethodusProject(target, packageName,isClient);
+        const sourceProject = new MethodusProject(source, packageName, options);
+        const targetProject =  new MethodusProject(target, packageName, options); //options.isProtobuf ? new ProtoProject(target, packageName, options) :
 
         if (configuration.models && Object.keys(configuration.models).length > 0) {
             Object.keys(configuration.models).forEach((modelKey) => {
@@ -23,12 +25,13 @@ export class Common {
             });
         }
 
-        
+
         if (configuration.contracts) {
             Object.keys(configuration.contracts).forEach((contractKey) => {
                 const contract = configuration.contracts[contractKey];
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, contract.path));
-                targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase(), isClient);
+                debugger;
+                targetProject.ProxifyFromFile(sourceFile, 'contracts', contractKey.toLocaleLowerCase(), options);
             });
         }
 
@@ -36,7 +39,7 @@ export class Common {
             Object.keys(configuration.includes).forEach((includeKey) => {
                 const include = configuration.includes[includeKey];
                 const sourceFile = sourceProject.project.addExistingSourceFile(path.join(source, include.path));
-                targetProject.HandleIncludeFile(sourceFile, 'includes', isClient);
+                targetProject.HandleIncludeFile(sourceFile, 'includes', options);
             });
         }
 
@@ -77,7 +80,7 @@ export class Common {
 
             ModelsIndex(configuration, source, path.join(target, ROOTSRC, 'models'), packageName);
         }
-        targetProject.Exportify(configuration, target, packageName, isClient);
+        targetProject.Exportify(configuration, target, packageName, options);
         return targetProject;
     }
 }

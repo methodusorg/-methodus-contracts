@@ -24,9 +24,9 @@ export class Client {
         }
 
     }
-    public link(dest: string) {
-        this.Installer.link(dest);
-    }
+    // public link(dest: string) {
+    //     this.Installer.link(dest);
+    // }
 
     public publish(dest: string) {
         this.Installer.publish(dest);

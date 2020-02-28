@@ -36,9 +36,9 @@ export class Server {
 
     }
 
-    public link(dest: string) {
-        this.Installer.link(dest);
-    }
+    // public link(dest: string) {
+    //     this.Installer.link(dest);
+    // }
 
     public publish(dest) {
         this.Installer.publish(dest);
